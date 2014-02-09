@@ -14,7 +14,7 @@
 
 /** Joueurs. */
 typedef enum Player {
-  PLAYER_1, PLAYER_2
+  PLAYER_1 = 'X', PLAYER_2 = 'O'
 } Player;
 
 /** Grille de jeu. */
@@ -31,5 +31,11 @@ void reversi_free(Reversi *reversi);
 /** Affiche une grille de jeu. */
 /* @param reversi : Grille à afficher. */
 void reversi_print(Reversi *reversi);
+
+/** Joue un coup dans la grille de jeu ; demande à l'utilisateur d'entrer son coup sur stdin. */
+/* @param reversi : Grille où jouer. */
+/* @param player : Joueur en cours. */
+/* @return : 0 si la grille n'était pas vide au moment du coup, ou -1 si impossible de jouer. */
+int reversi_set_move(Reversi *reversi, Player player);
 
 #endif /* _REVERSI_H_ INCLUDED */
