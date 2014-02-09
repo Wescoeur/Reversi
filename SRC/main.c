@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
 
   reversi = reversi_new();
   reversi_print(reversi);
-  reversi_set_move(reversi, 'X');
+  reversi_set_player_move(reversi, 'X');
   reversi_print(reversi);
 
   reversi_free(reversi);

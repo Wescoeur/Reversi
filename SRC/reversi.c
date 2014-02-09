@@ -101,11 +101,19 @@ void reversi_print(Reversi *reversi)
   return;
 }
 
+int reversi_exist_moves(Reversi *reversi, Player player)
+{
+  (void)reversi;
+  (void)player;
+
+  return reversi->n_moves != 0;
+}
+
 /** Teste si un coup joué dans la grille est valide.
     Modifie le buffer en conséquence auu bon format. */
 /* @param buf : Buffer obtenue par le biais de reversi_set_next_move. */
 /* @return 0 si le coup est valide, -1 sinon. */
-int __is_a_valide_move__(char *buf)
+int __is_a_valid_str__(char *buf)
 {
   char eval[2];
   char *p, c = 0, l = 0;
@@ -139,11 +147,11 @@ int __is_a_valide_move__(char *buf)
   return -1;
 }
 
-int reversi_set_move(Reversi *reversi, Player player)
+int reversi_set_player_move(Reversi *reversi, Player player)
 {
   char buf[10];
 
-  if(reversi->n_moves == 0)
+  if(!reversi_exist_moves(reversi, player))
     return -1;
 
   printf("Move: ");
@@ -152,7 +160,7 @@ int reversi_set_move(Reversi *reversi, Player player)
   {
     mygets(buf, 10);
 
-    if(__is_a_valide_move__(buf) == 0)
+    if(__is_a_valid_str__(buf) == 0)
     {
       __RVALUE__(reversi, buf[1], buf[0]) = player;
       break;
@@ -160,6 +168,16 @@ int reversi_set_move(Reversi *reversi, Player player)
 
     printf("Wrong move ! Re-try: ");
   }
+
+  return 0;
+}
+
+int reversi_set_ia_move(Reversi *reversi, Player player, Pos *pos)
+{
+  if(!reversi_exist_moves(reversi, player))
+    return -1;
+
+  (void)pos;
 
   return 0;
 }
