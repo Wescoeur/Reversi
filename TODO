@@ -2,4 +2,10 @@ Dans reversi.c
 	Fonction game_over, pour terminer le min-max.
 
 Dans ia.c
-	ia_eval + fonction qui évalue le plateau pour comparer les états de l'arbre.
+	- ia_eval + fonction qui évalue le plateau pour comparer les états de l'arbre.
+	- Elagage Alpha-Beta.
+
+?? Changer valeur retour reversi_set_ia_move(Reversi *reversi, Player player, Pos *pos); 0 si erreur et 1 sinon.
+?? parce que pas logique je fais un if ==0
+
+verifier le memcpy().
