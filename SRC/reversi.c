@@ -11,8 +11,7 @@
 #include "strplus.h"
 #include "reversi.h"
 
-#define __POS__(X, Y) (REVERSI_SIZE * (Y) + X)
-#define __RVALUE__(R, X, Y) (R)->array[__POS__(X, Y)]
+#define __RVALUE__(R, X, Y) (R)->array[POS(X, Y)]
 
 /* Une grille de Reversi. */
 struct Reversi
@@ -116,7 +115,7 @@ int reversi_exist_moves(Reversi *reversi, Player player)
 static void __update_game__(Reversi *reversi, Player player, Pos *pos)
 {
   /* Position du pion ajouté. */
-  const int cpos = __POS__(pos->x, pos->y);
+  const int cpos = POS(pos->x, pos->y);
   int i;
 
   /* Joueur adverse. */
@@ -126,39 +125,49 @@ static void __update_game__(Reversi *reversi, Player player, Pos *pos)
   reversi->array[cpos] = player;
 
   /* Horizontale 1. */
-  if(cpos % REVERSI_SIZE != 0)
+  if(!END_LEFT(cpos))
   {
-    for(i = cpos - 1; i % REVERSI_SIZE != 0 && reversi->array[i] == player2; i--);
+    for(i = cpos - 1; !END_LEFT(i) && reversi->array[i] == player2; i--);
 
     if(reversi->array[i] == player)
       for(; i < cpos; reversi->array[++i] = player);
   }
 
   /* Horizontale 2. */
-  if(cpos % REVERSI_SIZE != REVERSI_SIZE - 1)
+  if(!END_RIGHT(cpos))
   {
-    for(i = cpos + 1; i % REVERSI_SIZE != REVERSI_SIZE - 1 && reversi->array[i] == player2; i++);
+    for(i = cpos + 1; !END_RIGHT(i) && reversi->array[i] == player2; i++);
 
     if(reversi->array[i] == player)
       for(; i > cpos; reversi->array[--i] = player);
   }
 
   /* Verticale 1. */
-  if(cpos / REVERSI_SIZE != 0)
+  if(!END_UP(cpos))
   {
-    for(i = cpos - REVERSI_SIZE; i / REVERSI_SIZE != 0 && reversi->array[i] == player2; i -= REVERSI_SIZE);
+    for(i = cpos - REVERSI_SIZE; !END_UP(i) && reversi->array[i] == player2; i -= REVERSI_SIZE);
 
     if(reversi->array[i] == player)
       for(; i < cpos; reversi->array[i += REVERSI_SIZE] = player);
   }
 
   /* Verticale 2. */
-  if(cpos / REVERSI_SIZE != REVERSI_SIZE - 1)
+  if(!END_DOWN(cpos))
   {
-    for(i = cpos + REVERSI_SIZE; i / REVERSI_SIZE != REVERSI_SIZE - 1 && reversi->array[i] == player2; i += REVERSI_SIZE);
+    for(i = cpos + REVERSI_SIZE; !END_DOWN(i) && reversi->array[i] == player2; i += REVERSI_SIZE);
 
     if(reversi->array[i] == player)
       for(; i > cpos; reversi->array[i -= REVERSI_SIZE] = player);
+  }
+
+  /* Diagonale 1. */
+  if(!END_LEFT(cpos) && !END_UP(cpos))
+  {
+    for(i = cpos - REVERSI_SIZE - 1; !END_LEFT(i) && !END_UP(i) &&
+          reversi->array[i] == player2; i -= REVERSI_SIZE - 1);
+
+    if(reversi->array[i] == player)
+      for(; i < cpos; reversi->array[i += REVERSI_SIZE + 1] = player);
   }
 
   return;

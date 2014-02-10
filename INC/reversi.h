@@ -21,6 +21,13 @@ typedef char Player;
 
 #define INV_PLAYER(P) (P == PLAYER_1 ? PLAYER_2 : PLAYER_1)
 
+#define END_LEFT(P)  (P % REVERSI_SIZE == 0)
+#define END_RIGHT(P) (P % REVERSI_SIZE == REVERSI_SIZE - 1)
+#define END_UP(P)    (P / REVERSI_SIZE == 0)
+#define END_DOWN(P)  (P / REVERSI_SIZE == REVERSI_SIZE - 1)
+
+#define POS(X, Y) (REVERSI_SIZE * (Y) + X)
+
 /** Grille de jeu. */
 typedef struct Reversi Reversi;
 

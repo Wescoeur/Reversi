@@ -5,8 +5,8 @@
 /*                                                                        */
 /* ---------------------------------------------------------------------- */
 
-#include reversi.h
-#include ia.h
+#include "reversi.h"
+#include "ia.h"
 
 /** Grille d'évaluation de l'IA. */
 static const int grid[] = {500, -150, 30, 10, 10, 30, -150,  500,
