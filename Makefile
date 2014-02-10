@@ -35,10 +35,11 @@ BIN = tp1
 all: $(BIN)
 
 $(BIN): $(OBJ)
-	mkdir -p ${BIN_DIR}/
+	mkdir -p $(BIN_DIR)/
 	$(CXX) $(CXXFLAGS) -I$(INC_DIR) -o ${BIN_DIR}/${BIN} $(OBJ) $(LDFLAGS)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+	mkdir -p $(OBJ_DIR)/
 	$(CXX) $(CXXFLAGS) -I$(INC_DIR) -c $< -o $@
 
 clean:
