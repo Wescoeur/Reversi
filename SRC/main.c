@@ -12,14 +12,19 @@
 int main(int argc, char *argv[])
 {
   Reversi *reversi;
+  Player player = PLAYER_2;
 
   (void)argc;
   (void)argv;
 
   reversi = reversi_new();
   reversi_print(reversi);
-  reversi_set_player_move(reversi, 'X');
-  reversi_print(reversi);
+
+  for(;;)
+  {
+    reversi_set_player_move(reversi, player = INV_PLAYER(player));
+    reversi_print(reversi);
+  }
 
   reversi_free(reversi);
 

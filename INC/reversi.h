@@ -10,14 +10,16 @@
 
 #include "pos.h"
 
-/** Largeur et hauteur d'une grille de jeu. */
-#define REVERSI_WIDTH 8
-#define REVERSI_HEIGHT 8
+/** Longueur d'un côté de la grille. */
+#define REVERSI_SIZE 8
 
 /** Joueurs. */
-typedef enum Player {
-  PLAYER_1 = 'X', PLAYER_2 = 'O'
-} Player;
+typedef char Player;
+
+#define PLAYER_1 'X'
+#define PLAYER_2 'O'
+
+#define INV_PLAYER(P) (P == PLAYER_1 ? PLAYER_2 : PLAYER_1)
 
 /** Grille de jeu. */
 typedef struct Reversi Reversi;

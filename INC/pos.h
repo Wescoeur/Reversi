@@ -11,8 +11,8 @@
 /** Structure d'une position. */
 typedef struct Pos
 {
-  unsigned int x;
-  unsigned int y;
+  int x;
+  int y;
 } Pos;
 
 #endif /* _POS_H_ INCLUDED */
