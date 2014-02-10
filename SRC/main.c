@@ -21,6 +21,7 @@ int main(int argc, char *argv[])
 
   reversi = reversi_new();
   reversi_print(reversi);
+  
   ia_eval(reversi, player, pos, 0);
 
   for(;;)
