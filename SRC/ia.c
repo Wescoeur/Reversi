@@ -4,7 +4,8 @@
 /* Date: 2014-02-07 - 08:04:20                                            */
 /*                                                                        */
 /* ---------------------------------------------------------------------- */
-
+#include <stdlib.h>
+#include <stdio.h>
 #include <limits.h>
 #include <string.h>
 #include "reversi.h"
