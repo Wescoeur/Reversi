@@ -164,10 +164,40 @@ static void __update_game__(Reversi *reversi, Player player, Pos *pos)
   if(!END_LEFT(cpos) && !END_UP(cpos))
   {
     for(i = cpos - REVERSI_SIZE - 1; !END_LEFT(i) && !END_UP(i) &&
-          reversi->array[i] == player2; i -= REVERSI_SIZE - 1);
+          reversi->array[i] == player2; i -= REVERSI_SIZE + 1);
 
     if(reversi->array[i] == player)
       for(; i < cpos; reversi->array[i += REVERSI_SIZE + 1] = player);
+  }
+
+  /* Diagonale 2. */
+  if(!END_RIGHT(cpos) && !END_DOWN(cpos))
+  {
+    for(i = cpos + REVERSI_SIZE + 1; !END_RIGHT(i) && !END_DOWN(i) &&
+          reversi->array[i] == player2; i += REVERSI_SIZE + 1);
+
+    if(reversi->array[i] == player)
+      for(; i > cpos; reversi->array[i -= REVERSI_SIZE + 1] = player);
+  }
+
+  /* Diagonale 3. */
+  if(!END_LEFT(cpos) && !END_DOWN(cpos))
+  {
+    for(i = cpos + REVERSI_SIZE - 1; !END_LEFT(i) && !END_DOWN(i) &&
+          reversi->array[i] == player2; i += REVERSI_SIZE - 1);
+
+    if(reversi->array[i] == player)
+      for(; i > cpos; reversi->array[i -= REVERSI_SIZE - 1] = player);
+  }
+
+  /* Diagonale 4. */
+  if(!END_RIGHT(cpos) && !END_UP(cpos))
+  {
+    for(i = cpos - REVERSI_SIZE + 1; !END_RIGHT(i) && !END_UP(i) &&
+          reversi->array[i] == player2; i -= REVERSI_SIZE - 1);
+
+    if(reversi->array[i] == player)
+      for(; i < cpos; reversi->array[i += REVERSI_SIZE - 1] = player);
   }
 
   return;
