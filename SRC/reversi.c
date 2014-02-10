@@ -13,19 +13,10 @@
 
 #define __RVALUE__(R, X, Y) (R)->array[POS(X, Y)]
 
-/* Une grille de Reversi. */
-struct Reversi
-{
-  char *array;          /* Tableau de cases de la grille. */
-  unsigned int score_1; /* Score du joueur 1. */
-  unsigned int score_2; /* Score du joueur 2. */
-
-  unsigned int n_moves; /* Nombre de mouvements restants. */
-};
-
 Reversi *reversi_new(void)
 {
   Reversi *r;
+  int pos;
 
   if((r = malloc(sizeof *r)) == NULL)
     return NULL;
@@ -39,6 +30,12 @@ Reversi *reversi_new(void)
   r->score_1 = 0;
   r->score_2 = 0;
   r->n_moves = REVERSI_SIZE * REVERSI_SIZE;
+
+  pos = REVERSI_CENTER;
+  r->array[pos] = PLAYER_1;
+  r->array[pos + 1] = PLAYER_2;
+  r->array[pos + REVERSI_SIZE] = PLAYER_2;
+  r->array[pos + REVERSI_SIZE + 1] = PLAYER_1;
 
   return r;
 }
@@ -55,7 +52,7 @@ void reversi_free(Reversi *reversi)
   do {                                 \
     printf("\n    +");                 \
                                        \
-    for(I = 1; I < REVERSI_SIZE; I++) \
+    for(I = 1; I < REVERSI_SIZE; I++)  \
       printf("---+");                  \
                                        \
     printf("---+\n");                  \
@@ -65,7 +62,7 @@ void reversi_free(Reversi *reversi)
   do {                                  \
     printf("     ");                    \
                                         \
-    for(I = 1; I <= REVERSI_SIZE; I++) \
+    for(I = 1; I <= REVERSI_SIZE; I++)  \
       printf(" %d  ", I);               \
   } while(0)
 
@@ -101,11 +98,90 @@ void reversi_print(Reversi *reversi)
   return;
 }
 
-int reversi_exist_moves(Reversi *reversi, Player player)
+int reversi_is_a_right_move(Reversi *reversi, Player player, Pos *pos)
 {
-  (void)player;
+  /* Position du pion potentiellement ajouté. */
+  const int cpos = POS(pos->x, pos->y);
+  int i;
 
-  return reversi->n_moves != 0;
+  /* Joueur adverse. */
+  Player player2 = INV_PLAYER(player);
+
+  if(reversi->array[cpos] != 0)
+    return 0;
+
+  /* Horizontale 1. */
+  if(!END_LEFT(cpos) && reversi->array[i = cpos - 1] == player2)
+  {
+    for(; !END_LEFT(i) && reversi->array[i] == player2; i--);
+    if(reversi->array[i] == player) return 1;
+  }
+
+  /* Horizontale 2. */
+  if(!END_RIGHT(cpos) && reversi->array[i = cpos + 1] == player2)
+  {
+    for(; !END_RIGHT(i) && reversi->array[i] == player2; i++);
+    if(reversi->array[i] == player) return 1;
+  }
+
+  /* Verticale 1. */
+  if(!END_UP(cpos) && reversi->array[i = cpos - REVERSI_SIZE] == player2)
+  {
+    for(; !END_UP(i) && reversi->array[i] == player2; i -= REVERSI_SIZE);
+    if(reversi->array[i] == player) return 1;
+  }
+
+  /* Verticale 2. */
+  if(!END_DOWN(cpos) && reversi->array[i = cpos + REVERSI_SIZE] == player2)
+  {
+    for(; !END_DOWN(i) && reversi->array[i] == player2; i += REVERSI_SIZE);
+    if(reversi->array[i] == player) return 1;
+  }
+
+  /* Diagonale 1. */
+  if(!END_LEFT(cpos) && !END_UP(cpos) && reversi->array[i = cpos - REVERSI_SIZE - 1] == player2)
+  {
+    for(; !END_LEFT(i) && !END_UP(i) && reversi->array[i] == player2; i -= REVERSI_SIZE + 1);
+    if(reversi->array[i] == player) return 1;
+  }
+
+  /* Diagonale 2. */
+  if(!END_RIGHT(cpos) && !END_DOWN(cpos) && reversi->array[i = cpos + REVERSI_SIZE + 1] == player2)
+  {
+    for(; !END_RIGHT(i) && !END_DOWN(i) && reversi->array[i] == player2; i += REVERSI_SIZE + 1);
+    if(reversi->array[i] == player) return 1;
+  }
+
+  /* Diagonale 3. */
+  if(!END_LEFT(cpos) && !END_DOWN(cpos) && reversi->array[i = cpos + REVERSI_SIZE - 1] == player2)
+  {
+    for(; !END_LEFT(i) && !END_DOWN(i) && reversi->array[i] == player2; i += REVERSI_SIZE - 1);
+    if(reversi->array[i] == player) return 1;
+  }
+
+  /* Diagonale 4. */
+  if(!END_RIGHT(cpos) && !END_UP(cpos) && reversi->array[i = cpos - REVERSI_SIZE + 1] == player2)
+  {
+    for(; !END_RIGHT(i) && !END_UP(i) && reversi->array[i] == player2; i -= REVERSI_SIZE - 1);
+    if(reversi->array[i] == player) return 1;
+  }
+
+  return 0;
+}
+
+int reversi_exists_moves(Reversi *reversi, Player player)
+{
+  Pos pos;
+
+  if(reversi->n_moves == 0)
+    return 0;
+
+  for(pos.x = 0; pos.x < REVERSI_SIZE; pos.x++)
+    for(pos.y = 0; pos.y < REVERSI_SIZE; pos.y++)
+      if(reversi_is_a_right_move(reversi, player, &pos))
+        return 1;
+
+  return 0;
 }
 
 /** Met à jour la grille de jeu. */
@@ -246,10 +322,10 @@ int reversi_set_player_move(Reversi *reversi, Player player)
   char buf[10];
   Pos pos;
 
-  if(!reversi_exist_moves(reversi, player))
+  if(!reversi_exists_moves(reversi, player))
     return -1;
 
-  printf("Move: ");
+  printf("Move %c: ", player);
 
   for(;;)
   {
@@ -261,9 +337,11 @@ int reversi_set_player_move(Reversi *reversi, Player player)
       pos.x = buf[1];
 
       /* Si le mouvement est possible, on joue. */
-      __update_game__(reversi, player, &pos);
-
-      break;
+      if(reversi_is_a_right_move(reversi, player, &pos))
+      {
+        __update_game__(reversi, player, &pos);
+        break;
+      }
     }
 
     printf("Wrong move ! Re-try: ");
@@ -274,11 +352,15 @@ int reversi_set_player_move(Reversi *reversi, Player player)
 
 int reversi_set_ia_move(Reversi *reversi, Player player, Pos *pos)
 {
-  if(!reversi_exist_moves(reversi, player))
+  if(!reversi_exists_moves(reversi, player))
     return -1;
 
   /* Si le mouvement est possible, on joue. */
-  __update_game__(reversi, player, pos);
+  if(reversi_is_a_right_move(reversi, player, pos))
+  {
+    __update_game__(reversi, player, pos);
+    return 0;
+  }
 
-  return 0;
+  return -1;
 }

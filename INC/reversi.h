@@ -27,9 +27,17 @@ typedef char Player;
 #define END_DOWN(P)  (P / REVERSI_SIZE == REVERSI_SIZE - 1)
 
 #define POS(X, Y) (REVERSI_SIZE * (Y) + X)
+#define REVERSI_CENTER (POS(REVERSI_SIZE / 2 - 1, REVERSI_SIZE / 2 - 1))
 
-/** Grille de jeu. */
-typedef struct Reversi Reversi;
+/* Une grille de Reversi. */
+typedef struct Reversi
+{
+  char *array;          /* Tableau de cases de la grille. */
+  unsigned int score_1; /* Score du joueur 1. */
+  unsigned int score_2; /* Score du joueur 2. */
+
+  unsigned int n_moves; /* Nombre de mouvements restants. */
+} Reversi;
 
 /** Crée une grille de jeu. */
 /* @return : Une grille ou NULL en cas d'échec. */
@@ -43,11 +51,18 @@ void reversi_free(Reversi *reversi);
 /* @param reversi : Grille à afficher. */
 void reversi_print(Reversi *reversi);
 
+/** Teste si un coup est possible. */
+/* @param reversi : Grille de jeu. */
+/* @param player : Joueur courant. */
+/* @param pos : Position du coup à tester. */
+/* @return : 1 si le coup est possible, 0 sinon. */
+int reversi_is_a_right_move(Reversi *reversi, Player player, Pos *pos);
+
 /** Teste si il reste au moins un coup valide. */
 /* @param reversi : Grille de jeu. */
 /* @param player : Joueur en cours. */
 /* @return : 1 si oui, 0 sinon. */
-int reversi_exist_moves(Reversi *reversi, Player player);
+int reversi_exists_moves(Reversi *reversi, Player player);
 
 /** Joue un coup dans la grille de jeu ; demande à l'utilisateur d'entrer son coup sur stdin. */
 /* @param reversi : Grille où jouer. */
