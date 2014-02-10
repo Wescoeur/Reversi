@@ -1,0 +1,5 @@
+Dans reversi.c
+	Fonction game_over, pour terminer le min-max.
+
+Dans ia.c
+	ia_eval + fonction qui évalue le plateau pour comparer les états de l'arbre.
