@@ -23,9 +23,9 @@ static const int grid[] = {500, -150, 30, 10, 10, 30, -150,  500,
 int ia_eval(Reversi *reversi, Player player, Pos *pos, int depth)
 {
 	int i, j, bestScore, score;
-	Reversi *reversi_save;
 	Pos played_pos;
-	memcpy(reversi_save, reversi, sizeof(Reversi));
+	Reversi *reversi_save = malloc(sizeof *reversi_save);
+	memcpy(reversi_save, reversi, sizeof *reversi);
 
 
 	/*if (game_over())
