@@ -39,8 +39,8 @@ int ia_eval(Reversi *reversi, Player player, Pos *pos, int depth)
 
 
 	reversi_save = reversi_new();
-	memcpy(reversi_save->array, reversi->array, sizeof reversi->array);
-	
+	memcpy(reversi_save->array, reversi->array, sizeof *reversi->array);
+
 	if (depth % 2 == 0)
 	{
 		bestScore = INT_MIN;

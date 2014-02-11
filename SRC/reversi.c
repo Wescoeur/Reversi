@@ -296,8 +296,8 @@ static int __is_a_valid_str__(char *buf)
       if(c++) return -1; /* Un Chiffre déjà trouvé. */
       eval[1] = *p;
     }
-    else if((*p >= 'A' && *p <= 'A' + REVERSI_SIZE) ||
-            (*p >= 'a' && *p <= 'a' + REVERSI_SIZE))
+    else if((*p >= 'A' && *p < 'A' + REVERSI_SIZE) ||
+            (*p >= 'a' && *p < 'a' + REVERSI_SIZE))
     {
       if(l++) return -1; /* Une lettre déjà trouvée. */
       eval[0] = toupper(*p);
