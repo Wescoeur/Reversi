@@ -22,8 +22,10 @@ int main(int argc, char *argv[])
   reversi = reversi_new();
   reversi_print(reversi);
   
+  /*
+   * test.
+    */
   ia_eval(reversi, player, pos, 0);
-
   for(;;)
   {
     reversi_set_player_move(reversi, player = INV_PLAYER(player));
@@ -31,6 +33,7 @@ int main(int argc, char *argv[])
   }
 
   reversi_free(reversi);
+  free(pos);
 
   exit(EXIT_SUCCESS);
 }
