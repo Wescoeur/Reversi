@@ -32,14 +32,12 @@ BIN = tp1
 .PHONY: clean mrproper
 .SUFFIXES:
 
-all: $(BIN)
+all: dir $(BIN)
 
 $(BIN): $(OBJ)
-	mkdir -p $(BIN_DIR)/
 	$(CXX) $(CXXFLAGS) -I$(INC_DIR) -o ${BIN_DIR}/${BIN} $(OBJ) $(LDFLAGS)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
-	mkdir -p $(OBJ_DIR)/
 	$(CXX) $(CXXFLAGS) -I$(INC_DIR) -c $< -o $@
 
 clean:
@@ -48,5 +46,9 @@ clean:
 
 mrproper: clean
 	@rm -rf $(BIN_DIR)/$(BIN)
+
+dir:
+	@mkdir -p $(OBJ_DIR)/
+	@mkdir -p $(BIN_DIR)/
 
 rebuild: mrproper all
