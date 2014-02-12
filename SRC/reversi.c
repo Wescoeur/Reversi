@@ -32,10 +32,10 @@ Reversi *reversi_new(void)
   r->n_moves = REVERSI_SIZE * REVERSI_SIZE;
 
   pos = REVERSI_CENTER;
-  r->array[pos] = PLAYER_1;
-  r->array[pos + 1] = PLAYER_2;
-  r->array[pos + REVERSI_SIZE] = PLAYER_2;
-  r->array[pos + REVERSI_SIZE + 1] = PLAYER_1;
+  r->array[pos] = PLAYER_2;
+  r->array[pos + 1] = PLAYER_1;
+  r->array[pos + REVERSI_SIZE] = PLAYER_1;
+  r->array[pos + REVERSI_SIZE + 1] = PLAYER_2;
 
   return r;
 }
@@ -352,15 +352,15 @@ int reversi_set_player_move(Reversi *reversi, Player player)
 
 int reversi_set_ia_move(Reversi *reversi, Player player, Pos *pos)
 {
-  if(!reversi_exists_moves(reversi, player))
-    return -1;
+/*  if(!reversi_exists_moves(reversi, player))
+    return 0;*/
 
   /* Si le mouvement est possible, on joue. */
   if(reversi_is_a_right_move(reversi, player, pos))
   {
     __update_game__(reversi, player, pos);
-    return 0;
+    return 1;
   }
 
-  return -1;
+  return 0;
 }

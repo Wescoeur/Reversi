@@ -21,73 +21,118 @@ static const int grid[] = {500, -150, 30, 10, 10, 30, -150,  500,
                           -150, -250,  0,  0,  0,  0, -250, -150,
                            500, -150, 30, 10, 10, 30, -150,  500};
 
-int ia_eval(Reversi *reversi, Player player, Pos *pos, int depth)
+Pos ia_eval(Reversi *reversi, Player player)
 {
-	int i, j, bestScore, score;
-	Pos played_pos;
-	Reversi *reversi_save = NULL;
+	int i, j, bestScore = INT_MIN, score, depth = 5;
+	Pos playedPos;
+	Pos bestPos;
+	Reversi *reversiCpy = NULL;
 
 	/*if (game_over())
 	{
 		return INT_MAX;
-	} */
+	}*/
 
-	if (depth == DEPTH_MAX)
+	/*
+	 * Copie du plateau pour simuler les coup.
+	  */
+	reversiCpy = reversi_new();
+	for (i = 0; i < REVERSI_SIZE * REVERSI_SIZE; ++i)
+	{
+		reversiCpy->array[i] = reversi->array[i];
+	}
+
+	for(j = 0; j < REVERSI_SIZE; j++)
+	{
+		for(i = 0; i < REVERSI_SIZE; i++)
+		{
+			playedPos.x = i;
+			playedPos.y = j;
+			if (reversi_set_ia_move(reversiCpy, player, &playedPos))
+			{
+				if((score = ia_eval_min(reversiCpy, player, depth)) > bestScore)
+				{
+					bestScore = score;
+					bestPos.x = i;
+					bestPos.y = j;
+				}
+			}
+		}
+	}
+
+reversi_free(reversiCpy);
+return bestPos;
+}
+
+int ia_eval_min (Reversi *reversi, Player player, int depth)
+{
+	int i, j, minScore = INT_MAX, score;
+	Pos playedPos;
+	Reversi *reversiCpy = NULL;
+	if (depth == 0)
 	{
 		return ia_eval_grid(reversi, player);
 	}
 
-
-	reversi_save = reversi_new();
-	memcpy(reversi_save->array, reversi->array, sizeof *reversi->array);
-	
-	if (depth % 2 == 0)
+	reversiCpy = reversi_new();
+	for (i = 0; i < REVERSI_SIZE * REVERSI_SIZE; ++i)
 	{
-		bestScore = INT_MIN;
-		for(j = 0; j < REVERSI_SIZE; j++)
+		reversiCpy->array[i] = reversi->array[i];
+	}
+
+	for(j = 0; j < REVERSI_SIZE; j++)
+	{
+		for(i = 0; i < REVERSI_SIZE; i++)
 		{
-			for(i = 0; i < REVERSI_SIZE; i++)
+			playedPos.x = i;
+			playedPos.y = j;
+			if (reversi_set_ia_move(reversiCpy, player, &playedPos))
 			{
-				played_pos.x = i;
-				played_pos.y = j;
-				if (0 == reversi_set_ia_move(reversi_save, player, &played_pos))
+				if((score = ia_eval_max(reversiCpy, INV_PLAYER(player), depth - 1)) < minScore)
 				{
-					score = ia_eval(reversi_save, INV_PLAYER(player), pos, depth + 1);
-					if (score > bestScore)
-					{
-						bestScore = score;
-						pos->x = played_pos.x;
-						pos->y = played_pos.y;
-					}
-				}
-			}
-		}
-	} else {
-		bestScore = INT_MAX;
-		for(j = 0; j < REVERSI_SIZE; j++)
-		{
-			for(i = 0; i < REVERSI_SIZE; i++)
-			{
-				played_pos.x = i;
-				played_pos.y = j;
-				if (0 == reversi_set_ia_move(reversi_save, player, &played_pos))
-				{
-					score = ia_eval(reversi_save, INV_PLAYER(player), pos, depth + 1);
-					if (score < bestScore)
-					{
-						bestScore = score;
-						pos->x = played_pos.x;
-						pos->y = played_pos.y;
-					}
+					minScore = score;
 				}
 			}
 		}
 	}
-free(reversi_save);
+return minScore;
+}
+
+int ia_eval_max(Reversi *reversi, Player player, int depth)
+{
+	int i, j, bestScore = INT_MAX, score;
+	Pos playedPos;
+	Reversi *reversiCpy = NULL;
+	if (depth == 0)
+	{
+		return ia_eval_grid(reversi, player);
+	}
+
+	reversiCpy = reversi_new();
+	for (i = 0; i < REVERSI_SIZE * REVERSI_SIZE; ++i)
+	{
+		reversiCpy->array[i] = reversi->array[i];
+	}
+
+	for(j = 0; j < REVERSI_SIZE; j++)
+	{
+		for(i = 0; i < REVERSI_SIZE; i++)
+		{
+			playedPos.x = i;
+			playedPos.y = j;
+			if (reversi_set_ia_move(reversiCpy, player, &playedPos))
+			{
+				if((score = ia_eval_min(reversiCpy, INV_PLAYER(player), depth - 1)) > bestScore)
+				{
+					bestScore = score;
+				}
+			}
+		}
+	}
 return bestScore;
 }
 
-int ia_eval_grid (Reversi *reversi, Player player)
+int ia_eval_grid(Reversi *reversi, Player player)
 {
 	int i, j, pos, n = 0;
   	Player player2 = INV_PLAYER(player);

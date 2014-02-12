@@ -13,31 +13,26 @@
 int main(int argc, char *argv[])
 {
   Reversi *reversi;
-  Player player = PLAYER_2;
-  Pos *pos = malloc(sizeof *pos);
+  Player player = PLAYER_1;
+  Pos pos;
   
   (void)argc;
   (void)argv;
 
   reversi = reversi_new();
-  reversi_print(reversi);
   
-  /*
-   * test.
-    */
   for(;;)
   {
-    ia_eval(reversi, player, pos, 0);
-    reversi_set_ia_move(reversi, player, pos);
     reversi_print(reversi);
-    printf("L'IA a joué :%c %d\n", pos->y + 'a' , pos->x + 1);
+    reversi_set_player_move(reversi, player);
+    reversi_print(reversi);
 
-    reversi_set_player_move(reversi, INV_PLAYER(player));
-    reversi_print(reversi);
+    pos = ia_eval(reversi, INV_PLAYER(player));
+    reversi_set_ia_move(reversi, INV_PLAYER(player), &pos);
+    printf("L'IA a joué : %c%d\n", pos.y + 'A' , pos.x + 1);
   }
 
   reversi_free(reversi);
-  free(pos);
 
   exit(EXIT_SUCCESS);
 }
