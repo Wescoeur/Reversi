@@ -25,10 +25,14 @@ int main(int argc, char *argv[])
   /*
    * test.
     */
-  ia_eval(reversi, player, pos, 0);
   for(;;)
   {
-    reversi_set_player_move(reversi, player = INV_PLAYER(player));
+    ia_eval(reversi, player, pos, 0);
+    reversi_set_ia_move(reversi, player, pos);
+    reversi_print(reversi);
+    printf("L'IA a joué :%c %d\n", pos->y + 'a' , pos->x + 1);
+
+    reversi_set_player_move(reversi, INV_PLAYER(player));
     reversi_print(reversi);
   }
 
