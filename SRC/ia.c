@@ -177,7 +177,7 @@ Pos ia_alphabeta (Reversi *reversi, Player player, int depth)
 
   if (depth == 0)
   {
-    fprintf(stderr, "How the fuck you want I to return to you anything, if I can't do any fucking calculation ?!\n");
+    fprintf(stderr, "How the fuck you want me to return to you anything, if I can't do any fucking calculation ?!\n");
     exit(EXIT_FAILURE);
   }
 
