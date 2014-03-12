@@ -19,14 +19,19 @@ typedef char Player;
 #define PLAYER_1 'X'
 #define PLAYER_2 'O'
 
+/** Inverse le joueur courant. */
 #define INV_PLAYER(P) (P == PLAYER_1 ? PLAYER_2 : PLAYER_1)
 
+/** Teste le début/fin d'une ligne/colonne. */
 #define END_LEFT(P)  (P % REVERSI_SIZE == 0)
 #define END_RIGHT(P) (P % REVERSI_SIZE == REVERSI_SIZE - 1)
 #define END_UP(P)    (P / REVERSI_SIZE == 0)
 #define END_DOWN(P)  (P / REVERSI_SIZE == REVERSI_SIZE - 1)
 
+/** Position d'un pion en (x, y) */
 #define POS(X, Y) (REVERSI_SIZE * (Y) + X)
+
+/** Centre de la grille. */
 #define REVERSI_CENTER (POS(REVERSI_SIZE / 2 - 1, REVERSI_SIZE / 2 - 1))
 
 /* Une grille de Reversi. */

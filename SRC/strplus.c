@@ -13,7 +13,7 @@ void cleanbuf()
 {
   int c = 0;
 
-  while(c != '\n' && c != EOF)
+  while (c != '\n' && c != EOF)
     c = getchar();
 
   return;
@@ -23,9 +23,9 @@ int mygets(char *s, int size)
 {
   char *p = NULL;
 
-  if(fgets(s, size, stdin) != NULL)
+  if (fgets(s, size, stdin) != NULL)
   {
-    if((p = strchr(s, '\n')) != NULL)
+    if ((p = strchr(s, '\n')) != NULL)
       *p = '\0';
     else
       cleanbuf();
