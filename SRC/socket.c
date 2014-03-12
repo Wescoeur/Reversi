@@ -70,6 +70,7 @@ int server_resolve_host(IP *ip, const char *hostname, in_port_t port)
      Il s'agit donc d'une éventuelle création de serveur et non de client. */
   if(hostname == NULL)
     ip->host = INADDR_ANY;
+
   /* Sinon, récupération de l'ip à utiliser pour le client. */
   else if((ip->host = inet_addr(hostname)) == INADDR_NONE)
   {
@@ -118,8 +119,8 @@ TCP *tcp_get(IP *ip)
       return NULL;
     }
 
-    sock->ip.host = 0;
-    sock->ip.port = 0;
+    sock->ip.host = ip->host;
+    sock->ip.port = ip->port;
   }
   /* Demande serveur. */
   else

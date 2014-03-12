@@ -99,6 +99,8 @@ int ia_eval_min (Reversi *reversi, Player player, int depth)
       }
     }
   }
+
+  reversi_free(reversiCpy);
   return minScore;
 }
 
@@ -129,6 +131,8 @@ int ia_eval_max(Reversi *reversi, Player player, int depth)
       }
     }
   }
+
+  reversi_free(reversiCpy);
   return bestScore;
 }
 

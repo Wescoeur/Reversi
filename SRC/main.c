@@ -7,6 +7,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <signal.h>
+#include <setjmp.h>
+#include <errno.h>
 #include "config.h"
 #include "reversi.h"
 #include "ia.h"
@@ -14,41 +17,26 @@
 /** Nom du fichier de configuration. */
 #define CONFIG_FILENAME "config"
 
-#ifdef __unix__
-  #include <signal.h>
-  #include <unistd.h>
-  #include <string.h> /* memset */
+static volatile int run = 1;
+static jmp_buf jbuf;
 
-  volatile int run = 1;
+void handler(int sig)
+{
+  (void)sig;
+  run = 0;
+  longjmp(jbuf, 1);
 
-  void handler(int sig)
-  {
-    (void)sig;
-    run = 0;
-    printf("End...\n");
-
-    return;
-  }
-
-  void set_handler(void)
-  {
-    struct sigaction sig;
-
-    memset(&sig, 0, sizeof(sig));
-    sig.sa_handler = handler;
-    sigaction(SIGINT, &sig, NULL);
-
-    return;
-  }
-#else
-  int run = 1;
-#endif
+  return;
+}
 
 int main(void)
 {
-  Reversi *reversi;
-  Player player = PLAYER_1;
-  Pos pos;
+  Player player = PLAYER_1; /* Joueur courant. */
+  Pos pos;                  /* Position coup. */
+
+  Reversi *reversi;   /* Grille de jeu. */
+  Config *config;     /* Config serveur. */
+  TCP *socket = NULL; /* Socket client. */
 
   /* Initialisation des sockets. */
   INIT_SOCKET();
@@ -56,13 +44,29 @@ int main(void)
   /* Création d'une grille de jeu. */
   reversi = reversi_new();
 
-  /* Gestion de la sortie du programme. Pour les systèmes UNIX.
-     Windows n'a qu'à proposer une solution pour gérer les signaux posix... */
-  #ifdef __unix__
-    set_handler();
-  #endif
+  /* Mise en place d'un signal d'interruption. */
+  signal(SIGINT, handler);
 
+  /* Chargement de la configuration du client. */
+  config = config_load(CONFIG_FILENAME);
+
+#if 0
   /* Ouverture d'une socket client. */
+  if((socket = tcp_get(&config->ip)) == NULL)
+  {
+    perror("Socket");
+    exit(EXIT_FAILURE);
+  }
+
+  /* Envoie du nom du client. */
+  printf("Send client-name... (%d)\n", tcp_send(socket, config->name, PLAYER_NAME_SIZE));
+#endif
+
+  /* Libération de la configuration. */
+  free(config);
+
+  /* Point de sauvegarde de la pile pour un éventuel SIGINT. */
+  setjmp(jbuf);
 
   while(run)
   {
@@ -72,13 +76,14 @@ int main(void)
 
     pos = ia_eval(reversi, INV_PLAYER(player), 5);
     reversi_set_ia_move(reversi, INV_PLAYER(player), &pos);
-    printf("L'IA a joué : %c%d\n", pos.y + 'A' , pos.x + 1); run = 0;
+    printf("L'IA a joué : %c%d\n", pos.y + 'A' , pos.x + 1);
   }
-
-  printf("SORTIE\n");
 
   /* Libération de la grille. */
   reversi_free(reversi);
+
+  /* Fermeture socket client. */
+  tcp_close(socket);
 
   /* Fermeture des sockets. */
   END_SOCKET();
