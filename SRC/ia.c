@@ -164,8 +164,14 @@ Pos ia_alphabeta (Reversi *reversi, Player player, int depth)
   int i, j, temp;
   Reversi *reversiCpy = NULL;
   Pos playedPos, bestPos;
-
   int alpha = INT_MIN, beta = INT_MAX;
+
+  /*
+   * (-1,-1) initialisation in case of AI have no right move.
+   * So the returned position is still a valid position (we can access to x and y members).
+    */
+  bestPos.x = -1;
+  bestPos.y = -1;
 
   if (depth == 0)
   {
