@@ -43,17 +43,17 @@ Pos ia_eval(Reversi *reversi, Player player, int depth)
   Pos bestPos;
   Reversi *reversiCpy = NULL;
 
-  /*
-   * Copie du plateau pour simuler les coup.
-   */
-  reversiCpy = __grid_copy(reversi);
-
   for(j = 0; j < REVERSI_SIZE; j++)
   {
     for(i = 0; i < REVERSI_SIZE; i++)
     {
       playedPos.x = i;
       playedPos.y = j;
+      /*
+       * Copie du plateau pour simuler les coup.
+       */
+      reversiCpy = __grid_copy(reversi);
+
       if (reversi_set_ia_move(reversiCpy, player, &playedPos))
       {
         if((score = ia_eval_min(reversiCpy, player, depth)) > bestScore)
@@ -63,10 +63,14 @@ Pos ia_eval(Reversi *reversi, Player player, int depth)
           bestPos.y = j;
         }
       }
+
+      /*
+       * Annulation du coup.
+        */
+      reversi_free(reversiCpy);
     }
   }
 
-  reversi_free(reversiCpy);
   return bestPos;
 }
 
@@ -80,14 +84,14 @@ int ia_eval_min (Reversi *reversi, Player player, int depth)
     return ia_eval_grid(reversi, player);
   }
 
-  reversiCpy = __grid_copy(reversi);
-
   for(j = 0; j < REVERSI_SIZE; j++)
   {
     for(i = 0; i < REVERSI_SIZE; i++)
     {
       playedPos.x = i;
       playedPos.y = j;
+
+      reversiCpy = __grid_copy(reversi);
       if (reversi_set_ia_move(reversiCpy, player, &playedPos))
       {
         if((score = ia_eval_max(reversiCpy, INV_PLAYER(player), depth - 1)) < minScore)
@@ -95,10 +99,9 @@ int ia_eval_min (Reversi *reversi, Player player, int depth)
           minScore = score;
         }
       }
+      reversi_free(reversiCpy);
     }
   }
-
-  reversi_free(reversiCpy);
   return minScore;
 }
 
@@ -112,14 +115,14 @@ int ia_eval_max(Reversi *reversi, Player player, int depth)
     return ia_eval_grid(reversi, player);
   }
 
-  reversiCpy = __grid_copy(reversi);
-
   for(j = 0; j < REVERSI_SIZE; j++)
   {
     for(i = 0; i < REVERSI_SIZE; i++)
     {
       playedPos.x = i;
       playedPos.y = j;
+
+      reversiCpy = __grid_copy(reversi);
       if (reversi_set_ia_move(reversiCpy, player, &playedPos))
       {
         if((score = ia_eval_min(reversiCpy, INV_PLAYER(player), depth - 1)) > bestScore)
@@ -127,10 +130,9 @@ int ia_eval_max(Reversi *reversi, Player player, int depth)
           bestScore = score;
         }
       }
+      reversi_free(reversiCpy);
     }
   }
-
-  reversi_free(reversiCpy);
   return bestScore;
 }
 
@@ -175,8 +177,8 @@ Pos ia_alphabeta (Reversi *reversi, Player player, int depth)
 
   if (depth == 0)
   {
-    fprintf(stderr, "How the fuck you want I return to you anything, if I can't do any fucking calculation ?!\n");
-    exit(-1);
+    fprintf(stderr, "How the fuck you want I to return to you anything, if I can't do any fucking calculation ?!\n");
+    exit(EXIT_FAILURE);
   }
 
   for(j = 0; j < REVERSI_SIZE; j++)
