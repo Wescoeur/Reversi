@@ -23,7 +23,7 @@ int ia_eval_max(Reversi *reversi, Player player, int depth);
 /*
  * AI function but with alpha-beta pruning.
   */
-Pos ia_alphabeta (Reversi *reversi, int depth, Player player);
+Pos ia_alphabeta (Reversi *reversi, Player player, int depth);
 int ia_alphabeta_bis (Reversi *reversi, int depth, int alpha, int beta, Player player, int maximizingPlayer);
 
 int ia_eval_grid(Reversi *reversi, Player player);

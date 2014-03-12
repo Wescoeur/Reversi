@@ -159,7 +159,7 @@ int ia_eval_grid(Reversi *reversi, Player player)
 /*
  * AI function but with alpha-beta pruning. 
   */
-Pos ia_alphabeta (Reversi *reversi, int depth, Player player)
+Pos ia_alphabeta (Reversi *reversi, Player player, int depth)
 {
   int i, j, temp;
   Reversi *reversiCpy = NULL;
@@ -173,27 +173,27 @@ Pos ia_alphabeta (Reversi *reversi, int depth, Player player)
     exit(-1);
   }
 
-  reversiCpy = __grid_copy(reversi);
-
   for(j = 0; j < REVERSI_SIZE; j++)
   {
     for(i = 0; i < REVERSI_SIZE; i++)
     {
       playedPos.x = i;
       playedPos.y = j;
+
+      reversiCpy = __grid_copy(reversi);
       if (reversi_set_ia_move(reversiCpy, player, &playedPos))
       {
         temp = ia_alphabeta_bis(reversiCpy, depth - 1, alpha, beta, INV_PLAYER(player), 0);
-        if (temp > alpha)
+        if (temp >= alpha)
         {
           alpha = temp;
           bestPos.x = i;
           bestPos.y = j;
         }
       }
+      reversi_free(reversiCpy);
     }
   }
-  reversi_free(reversiCpy);
   return bestPos;
 }
 
@@ -208,8 +208,6 @@ int ia_alphabeta_bis (Reversi *reversi, int depth, int alpha, int beta, Player p
     return ia_eval_grid(reversi, player);
   }
 
-  reversiCpy = __grid_copy(reversi);
-
   if (maximizingPlayer)
   {
     for(j = 0; j < REVERSI_SIZE; j++)
@@ -218,6 +216,8 @@ int ia_alphabeta_bis (Reversi *reversi, int depth, int alpha, int beta, Player p
       {
         playedPos.x = i;
         playedPos.y = j;
+
+        reversiCpy = __grid_copy(reversi);
         if (reversi_set_ia_move(reversiCpy, player, &playedPos))
         {
           /*
@@ -234,9 +234,9 @@ int ia_alphabeta_bis (Reversi *reversi, int depth, int alpha, int beta, Player p
             return alpha;
           }
         }
+        reversi_free(reversiCpy);
       }
     }
-    reversi_free(reversiCpy);
     return alpha;
   }
 
@@ -246,6 +246,8 @@ int ia_alphabeta_bis (Reversi *reversi, int depth, int alpha, int beta, Player p
     {
       playedPos.x = i;
       playedPos.y = j;
+
+      reversiCpy = __grid_copy(reversi);
       if (reversi_set_ia_move(reversiCpy, player, &playedPos))
       {
         beta = MIN(beta, ia_alphabeta_bis(reversiCpy, depth - 1, alpha, beta, INV_PLAYER(player), 1));
@@ -258,8 +260,8 @@ int ia_alphabeta_bis (Reversi *reversi, int depth, int alpha, int beta, Player p
           return beta;
         }
       }
+      reversi_free(reversiCpy);
     }
   }
-  reversi_free(reversiCpy);
   return beta;
 }

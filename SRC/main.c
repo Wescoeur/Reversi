@@ -74,7 +74,7 @@ int main(void)
     reversi_set_player_move(reversi, player);
     reversi_print(reversi);
 
-    pos = ia_eval(reversi, INV_PLAYER(player), 5);
+    pos = ia_alphabeta(reversi, INV_PLAYER(player), 5);
     reversi_set_ia_move(reversi, INV_PLAYER(player), &pos);
     printf("L'IA a joué : %c%d\n", pos.y + 'A' , pos.x + 1);
   }
