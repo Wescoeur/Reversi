@@ -12,6 +12,9 @@
 #include "reversi.h"
 #include "ia.h"
 
+#define MIN(A,B) (((A) < (B)) ? (A) : (B))
+#define MAX(A,B) (((A) > (B)) ? (A) : (B))
+
 /** Grille d'évaluation de l'IA. */
 static const int grid[] = {500, -150, 30, 10, 10, 30, -150, 500,
                            -150, -250, 0, 0, 0, 0, -250, -150,
@@ -39,11 +42,6 @@ Pos ia_eval(Reversi *reversi, Player player, int depth)
   Pos playedPos;
   Pos bestPos;
   Reversi *reversiCpy = NULL;
-
-  /*if (game_over())
-    {
-    return INT_MAX;
-    }*/
 
   /*
    * Copie du plateau pour simuler les coup.
@@ -151,4 +149,113 @@ int ia_eval_grid(Reversi *reversi, Player player)
     }
   }
   return n;
+}
+
+
+/*
+ * AI function but with alpha-beta pruning. 
+  */
+Pos ia_alphabeta (Reversi *reversi, int depth, Player player)
+{
+  int i, j, temp;
+  Reversi *reversiCpy = NULL;
+  Pos playedPos, bestPos;
+
+  int alpha = INT_MIN, beta = INT_MAX;
+
+  if (depth == 0)
+  {
+    fprintf(stderr, "How the fuck you want I return to you anything, if I can't do any fucking calculation ?!\n");
+    exit(-1);
+  }
+
+  reversiCpy = __grid_copy(reversi);
+
+  for(j = 0; j < REVERSI_SIZE; j++)
+  {
+    for(i = 0; i < REVERSI_SIZE; i++)
+    {
+      playedPos.x = i;
+      playedPos.y = j;
+      if (reversi_set_ia_move(reversiCpy, player, &playedPos))
+      {
+        temp = ia_alphabeta_bis(reversiCpy, depth - 1, alpha, beta, INV_PLAYER(player), 0);
+        if (temp > alpha)
+        {
+          alpha = temp;
+          bestPos.x = i;
+          bestPos.y = j;
+        }
+      }
+    }
+  }
+  reversi_free(reversiCpy);
+  return bestPos;
+}
+
+int ia_alphabeta_bis (Reversi *reversi, int depth, int alpha, int beta, Player player, int maximizingPlayer)
+{
+  int i,j;
+  Reversi *reversiCpy = NULL;
+  Pos playedPos;
+
+  if (depth == 0)
+  {
+    return ia_eval_grid(reversi, player);
+  }
+
+  reversiCpy = __grid_copy(reversi);
+
+  if (maximizingPlayer)
+  {
+    for(j = 0; j < REVERSI_SIZE; j++)
+    {
+      for(i = 0; i < REVERSI_SIZE; i++)
+      {
+        playedPos.x = i;
+        playedPos.y = j;
+        if (reversi_set_ia_move(reversiCpy, player, &playedPos))
+        {
+          /*
+           * If the position is playable, then we put a disk on this position and do
+           * the recursiv call.
+            */
+          alpha = MAX(alpha, ia_alphabeta_bis(reversiCpy, depth - 1, alpha, beta, INV_PLAYER(player), 0));
+          if (beta <= alpha)
+          {
+            /*
+             * Beta cut-off.
+              */
+            reversi_free(reversiCpy);
+            return alpha;
+          }
+        }
+      }
+    }
+    reversi_free(reversiCpy);
+    return alpha;
+  }
+
+  for(j = 0; j < REVERSI_SIZE; j++)
+  {
+    for(i = 0; i < REVERSI_SIZE; i++)
+    {
+      playedPos.x = i;
+      playedPos.y = j;
+      if (reversi_set_ia_move(reversiCpy, player, &playedPos))
+      {
+        beta = MIN(beta, ia_alphabeta_bis(reversiCpy, depth - 1, alpha, beta, INV_PLAYER(player), 1));
+        if (beta <= alpha)
+        {
+          /*
+           * Alpha cut-off
+            */
+          reversi_free(reversiCpy);
+          return beta;
+        }
+      }
+    }
+  }
+  reversi_free(reversiCpy);
+  return beta;
 }
