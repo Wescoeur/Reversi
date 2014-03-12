@@ -74,7 +74,7 @@ void tcp_get_adress(TCP *sock, IP *res);
 /* @return : Une socket ayant fait une demande. */
 TCP *tcp_accept(TCP *server);
 
-/* Envoit des données à partir d'une socket. */
+/* Envoie des données à partir d'une socket. */
 /* @param sock : Socket source. */
 /* @param date : Données à envoyer. */
 /* @param len : Taille des données. */
