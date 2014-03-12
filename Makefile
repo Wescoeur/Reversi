@@ -12,7 +12,7 @@ BIN_DIR = BIN
 # Compilation flags
 
 CXX = gcc
-CXXFLAGS = -Wall -Wextra -pedantic -ansi
+CXXFLAGS = -Wall -Wextra -pedantic
 LDFLAGS = 
 
 ifeq ($(DEBUG), yes)

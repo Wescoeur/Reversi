@@ -5,9 +5,8 @@
 /*                                                                        */
 /* ---------------------------------------------------------------------- */
 
-#include <stdio.h>
-#include <stdlib.h>
 #include <ctype.h>
+#include "alloc.h"
 #include "strplus.h"
 #include "reversi.h"
 
@@ -18,14 +17,8 @@ Reversi *reversi_new(void)
   Reversi *r;
   int pos;
 
-  if((r = malloc(sizeof *r)) == NULL)
-    return NULL;
-
-  if((r->array = calloc(REVERSI_SIZE * REVERSI_SIZE, sizeof(char))) == NULL)
-  {
-    free(r);
-    return NULL;
-  }
+  pmalloc(r, sizeof *r);
+  pcalloc(r->array, REVERSI_SIZE * REVERSI_SIZE, sizeof(char));
 
   r->score_1 = 0;
   r->score_2 = 0;
@@ -188,7 +181,7 @@ int reversi_exists_moves(Reversi *reversi, Player player)
 /* @param reversi : Grille de jeu. */
 /* @param player : Joueur en cours. */
 /* @param pos : Position où jouer. */
-static void __update_game__(Reversi *reversi, Player player, Pos *pos)
+static void __update_game(Reversi *reversi, Player player, Pos *pos)
 {
   /* Position du pion ajouté. */
   const int cpos = POS(pos->x, pos->y);
@@ -283,7 +276,7 @@ static void __update_game__(Reversi *reversi, Player player, Pos *pos)
     Modifie le buffer en conséquence auu bon format. */
 /* @param buf : Buffer obtenue par le biais de reversi_set_next_move. */
 /* @return 0 si le coup est valide, -1 sinon. */
-static int __is_a_valid_str__(char *buf)
+static int __is_a_valid_str(char *buf)
 {
   char eval[2];
   char *p, c = 0, l = 0;
@@ -329,9 +322,9 @@ int reversi_set_player_move(Reversi *reversi, Player player)
 
   for(;;)
   {
-    mygets(buf, 10);
+    mygets(buf, 10, stdin);
 
-    if(__is_a_valid_str__(buf) == 0)
+    if(__is_a_valid_str(buf) == 0)
     {
       pos.y = buf[0];
       pos.x = buf[1];
@@ -339,7 +332,7 @@ int reversi_set_player_move(Reversi *reversi, Player player)
       /* Si le mouvement est possible, on joue. */
       if(reversi_is_a_right_move(reversi, player, &pos))
       {
-        __update_game__(reversi, player, &pos);
+        __update_game(reversi, player, &pos);
         break;
       }
     }
@@ -358,7 +351,7 @@ int reversi_set_ia_move(Reversi *reversi, Player player, Pos *pos)
   /* Si le mouvement est possible, on joue. */
   if(reversi_is_a_right_move(reversi, player, pos))
   {
-    __update_game__(reversi, player, pos);
+    __update_game(reversi, player, pos);
     return 1;
   }
 
