@@ -12,6 +12,17 @@
 
 #define __RVALUE__(R, X, Y) (R)->array[POS(X, Y)]
 
+#ifdef DEBUG
+  #define BAD_POS(POS)                                      \
+    if(cpos <  0 || cpos >= REVERSI_SIZE * REVERSI_SIZE)    \
+    {                                                       \
+      fprintf(stderr, "Bad Pos: %d, %d\n", pos->x, pos->y); \
+      exit(EXIT_FAILURE);                                   \
+    }
+#else
+  #define BAD_POS()
+#endif
+
 Reversi *reversi_new(void)
 {
   Reversi *r;
@@ -20,8 +31,6 @@ Reversi *reversi_new(void)
   pmalloc(r, sizeof *r);
   pcalloc(r->array, REVERSI_SIZE * REVERSI_SIZE, sizeof(char));
 
-  r->score_1 = 0;
-  r->score_2 = 0;
   r->n_moves = REVERSI_SIZE * REVERSI_SIZE;
 
   pos = REVERSI_CENTER;
@@ -77,11 +86,6 @@ void reversi_print(Reversi *reversi)
 
     printf(" %c", c++);
 
-    if(j == REVERSI_SIZE / 2)
-      printf("    PLAYER 1: %u", reversi->score_1);
-    if(j == REVERSI_SIZE / 2 + 1)
-      printf("    PLAYER 2: %u", reversi->score_2);
-
     __REVERSI_DRAW_LINE__(i);
   }
 
@@ -99,6 +103,12 @@ int reversi_is_a_right_move(Reversi *reversi, Player player, Pos *pos)
 
   /* Joueur adverse. */
   Player player2 = INV_PLAYER(player);
+
+  BAD_POS(cpos);
+
+  /* Coup non jouable. */
+  if(pos->x == -1 && pos->y == -1)
+    return 0;
 
   if(reversi->array[cpos] != 0)
     return 0;
@@ -190,8 +200,11 @@ static void __update_game(Reversi *reversi, Player player, Pos *pos)
   /* Joueur adverse. */
   Player player2 = INV_PLAYER(player);
 
+  BAD_POS(cpos);
+
   /* Placement du premier jeton. */
   reversi->array[cpos] = player;
+  reversi->n_moves--;
 
   /* Horizontale 1. */
   if(!END_LEFT(cpos))

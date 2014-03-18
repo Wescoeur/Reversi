@@ -38,9 +38,6 @@ typedef char Player;
 typedef struct Reversi
 {
   char *array;          /* Tableau de cases de la grille. */
-  unsigned int score_1; /* Score du joueur 1. */
-  unsigned int score_2; /* Score du joueur 2. */
-
   unsigned int n_moves; /* Nombre de mouvements restants. */
 } Reversi;
 
@@ -78,7 +75,7 @@ int reversi_set_player_move(Reversi *reversi, Player player);
 /** Joue un coup dans la grille de jeu ; utilise un coup passé en argument. */
 /* @param reversi : Grille où jouer. */
 /* @param player : Joueur en cours. */
-/* @return : 0 si un coup est jouable et a été joué, ou -1 si impossible de jouer. */
+/* @return : 1 si un coup est jouable et a été joué, ou 0 si impossible de jouer. */
 int reversi_set_ia_move(Reversi *reversi, Player player, Pos *pos);
 
 #endif /* _REVERSI_H_ INCLUDED */

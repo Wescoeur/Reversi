@@ -71,12 +71,18 @@ int main(void)
   while(run)
   {
     reversi_print(reversi);
-    reversi_set_player_move(reversi, player);
+    /* reversi_set_player_move(reversi, player); */
+
+    pos = ia_alphabeta(reversi, player, 5);
+    reversi_set_ia_move(reversi, player, &pos);
+    printf("L'IA 1 a joué : %c%d (%u coups)\n", pos.y + 'A' , pos.x + 1, reversi->n_moves);
+
     reversi_print(reversi);
 
-    pos = ia_alphabeta(reversi, INV_PLAYER(player), 5);
+  pos = ia_alphabeta(reversi, INV_PLAYER(player), 5);
     reversi_set_ia_move(reversi, INV_PLAYER(player), &pos);
-    printf("L'IA a joué : %c%d\n", pos.y + 'A' , pos.x + 1);
+
+    printf("L'IA 2 a joué : %c%d (%u coups)\n", pos.y + 'A' , pos.x + 1, reversi->n_moves);
   }
 
   /* Libération de la grille. */
