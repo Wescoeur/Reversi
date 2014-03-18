@@ -31,7 +31,7 @@ Reversi *reversi_new(void)
   pmalloc(r, sizeof *r);
   pcalloc(r->array, REVERSI_SIZE * REVERSI_SIZE, sizeof(char));
 
-  r->n_moves = REVERSI_SIZE * REVERSI_SIZE;
+  r->n_moves = REVERSI_SIZE * REVERSI_SIZE - 4;
 
   pos = REVERSI_CENTER;
   r->array[pos] = PLAYER_2;
@@ -358,9 +358,6 @@ int reversi_set_player_move(Reversi *reversi, Player player)
 
 int reversi_set_ia_move(Reversi *reversi, Player player, Pos *pos)
 {
-/*  if(!reversi_exists_moves(reversi, player))
-    return 0;*/
-
   /* Si le mouvement est possible, on joue. */
   if(reversi_is_a_right_move(reversi, player, pos))
   {
