@@ -367,3 +367,19 @@ int reversi_set_ia_move(Reversi *reversi, Player player, Pos *pos)
 
   return 0;
 }
+
+int reversi_game_over(Reversi *reversi)
+{
+  Player p = PLAYER_1; 
+  Pos pos;
+
+  if(reversi->n_moves == 0)
+    return 1;
+
+  for(pos.x = 0; pos.x < REVERSI_SIZE; pos.x++)
+    for(pos.y = 0; pos.y < REVERSI_SIZE; pos.y++)
+      if(reversi_is_a_right_move(reversi, p, &pos) || reversi_is_a_right_move(reversi, INV_PLAYER(p), &pos))
+        return 0;
+
+  return 1;
+}

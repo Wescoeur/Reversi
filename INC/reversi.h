@@ -78,4 +78,8 @@ int reversi_set_player_move(Reversi *reversi, Player player);
 /* @return : 1 si un coup est jouable et a été joué, ou 0 si impossible de jouer. */
 int reversi_set_ia_move(Reversi *reversi, Player player, Pos *pos);
 
+/** Teste si la parti est terminée (plus de coup disponible pour les 2 joueurs) */
+/* @param reversi : Grille de jeu. */
+int reversi_game_over(Reversi *reversi);
+
 #endif /* _REVERSI_H_ INCLUDED */

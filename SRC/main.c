@@ -110,6 +110,7 @@ void ia_vs_player(void)
       break;
   }
 
+  reversi_print(reversi);
   printf("Partie terminée.\n");
 
   /* Libération de la grille. */
