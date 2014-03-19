@@ -36,6 +36,9 @@ static Reversi *__grid_copy(Reversi *reversi)
   return cpy;
 }
 
+/*
+ * Grid evaluation with the grid[] table (see above).
+  */
 int ia_eval_grid(Reversi *reversi, Player player)
 {
   int i, j, pos, n = 0;
@@ -77,7 +80,7 @@ Pos ia_alphabeta (Reversi *reversi, Player player, int depth)
 
   if (depth == 0 || reversi_game_over(reversi))
   {
-    fprintf(stderr, "How the fuck you want me to return to you anything, if I can't do any fucking calculation ?!\n");
+    fprintf(stderr, "How the fuck do you want me to return to you anything, if I can't do any fucking calculation ?!\n");
     exit(EXIT_FAILURE);
   }
 
@@ -172,4 +175,420 @@ int ia_alphabeta_bis (Reversi *reversi, int depth, int alpha, int beta, Player p
     }
   }
   return beta;
+}
+
+
+/*
+ * Grid evaluation v 2.0
+  */
+int ia_eval_grid_2(Reversi *reversi, Player player)
+{
+  int pos, pos_bis, n = 0, c;
+  int GGood = 512, Ggood = 32, ggood = 16, good = 8, not_bad = 0, bad = -256, Bad = -1024;
+  Player player2 = INV_PLAYER(player);
+
+  for (pos = 0; pos < REVERSI_SIZE * REVERSI_SIZE; ++pos)
+  {
+    if (reversi->array[pos] == player)
+    {
+      /*
+       * If the cell is a corner, it's super good if the player own it.
+        */
+      if (pos == TOP_LEFT_CORNER || pos == TOP_RIGHT_CORNER || pos == BOTTOM_LEFT_CORNER || pos == BOTTOM_RIGHT_CORNER)
+      {
+        n += 500;
+      }
+
+      /*
+       * Else, we need to do some calculation pos is a position just before a corner.
+       * 'Cause it's a dangerous place. (Very dangerous... really)
+        */
+
+      /*
+       * TOP LEFT CORNER.
+       * Line.
+        */
+      else if (pos == TOP_LEFT_CORNER + 1)
+      {
+        /*
+         * We need to check the corner.
+          */
+        if (reversi->array[TOP_LEFT_CORNER] == player)
+        {
+          n += Ggood;
+        } else {
+          /*
+           * In that case we need to check what is at the end of the line.
+           * c count the number of disk between pos end the end of the line.
+            */
+          for (pos_bis = pos + 1, c = 1;
+            pos_bis <= TOP_RIGHT_CORNER && reversi->array[pos_bis] == player;
+            ++pos_bis, ++c);
+
+          /*
+           * If the player own all the line, it's good.
+            */
+          if (pos_bis > TOP_RIGHT_CORNER)
+          {
+            n += GGood;
+          } else {
+            /*
+             * If at the end of the line there is a disk owned by the other player
+             * we need to check if the corner is empty or not.
+              */
+            if (reversi->array[pos_bis] == player2)
+            {
+              if (reversi->array[TOP_LEFT_CORNER] == player2)
+              {
+                n += GGood;
+              } else {
+                n += (c * Bad);
+              }
+            } else {
+              /*
+               * Else, it's just not a good position but
+               * we check if it's a very bad position or just a bad position.
+                */
+              if (reversi->array[TOP_LEFT_CORNER] == player2)
+              {
+                n += (c * Bad);
+              } else {
+                n += (c * bad);
+              }
+            }
+          }
+        }
+      }
+
+      /*
+       * TOP LEFT CORNER.
+       * Column.
+        */
+      else if (pos == TOP_LEFT_CORNER + REVERSI_SIZE)
+      {
+        if (reversi->array[TOP_LEFT_CORNER] == player)
+        {
+          n += Ggood;
+        } else {
+          for (pos_bis = pos + REVERSI_SIZE, c = 1;
+            pos_bis <= BOTTOM_LEFT_CORNER && reversi->array[pos_bis] == player;
+            pos_bis += REVERSI_SIZE, ++c);
+
+          if (pos_bis > BOTTOM_LEFT_CORNER)
+          {
+            n += GGood;
+          } else {
+            if (reversi->array[pos_bis] == player2)
+            {
+              if (reversi->array[TOP_LEFT_CORNER] == player2)
+              {
+                n += GGood;
+              } else {
+                n += (c * Bad);
+              }
+            } else {
+              if (reversi->array[TOP_LEFT_CORNER] == player2)
+              {
+                n += (c * Bad);
+              } else {
+                n += (c * bad);
+              }
+            }
+          }
+        }
+      }
+
+      /*
+       * TOP LEFT CORNER.
+       * Diagonal.
+        */
+      else if (pos == TOP_LEFT_CORNER + REVERSI_SIZE + 1)
+      {
+        if (reversi->array[TOP_LEFT_CORNER] == player)
+        {
+          n += good;
+        } else {
+          n += Bad;
+        }
+      }
+
+      /*
+       * TOP RIGHT CORNER.
+       * Line.
+        */
+      else if (pos == TOP_RIGHT_CORNER - 1)
+      {
+        if (reversi->array[TOP_RIGHT_CORNER] == player)
+        {
+          n += Ggood;
+        } else {
+          for (pos_bis = pos - 1, c = 1;
+            pos_bis >= TOP_LEFT_CORNER && reversi->array[pos_bis] == player;
+            --pos_bis, ++c);
+
+          if (pos_bis < TOP_LEFT_CORNER)
+          {
+            n += GGood;
+          } else {
+            if (reversi->array[pos_bis] == player2)
+            {
+              if (reversi->array[TOP_RIGHT_CORNER] == player2)
+              {
+                n += GGood;
+              } else {
+                n += (c * Bad);
+              }
+            } else {
+              if (reversi->array[TOP_RIGHT_CORNER] == player2)
+              {
+                n += (c * Bad);
+              } else {
+                n += (c * bad);
+              }
+            }
+          }
+        }
+      }
+
+      /*
+       * TOP RIGHT CORNER.
+       * Column.
+        */
+      else if (pos == TOP_RIGHT_CORNER + REVERSI_SIZE)
+      {
+        if (reversi->array[TOP_RIGHT_CORNER] == player)
+        {
+          n += Ggood;
+        } else {
+          for (pos_bis = pos + REVERSI_SIZE, c = 1;
+            pos_bis <= BOTTOM_RIGHT_CORNER && reversi->array[pos_bis] == player;
+            pos_bis += REVERSI_SIZE , ++c);
+
+          if (pos_bis > BOTTOM_RIGHT_CORNER)
+          {
+            n += GGood;
+          } else {
+            if (reversi->array[pos_bis] == player2)
+            {
+              if (reversi->array[TOP_RIGHT_CORNER] == player2)
+              {
+                n += GGood;
+              } else {
+                n += (c * Bad);
+              }
+            } else {
+              if (reversi->array[TOP_RIGHT_CORNER] == player2)
+              {
+                n += (c * Bad);
+              } else {
+                n += (c * bad);
+              }
+            }
+          }
+        }
+      }
+
+      /*
+       * TOP RIGHT CORNER.
+       * Diagonal.
+        */
+      else if (pos == TOP_RIGHT_CORNER + REVERSI_SIZE - 1)
+      {
+        if (reversi->array[TOP_RIGHT_CORNER] == player)
+        {
+          n += good;
+        } else {
+          n += Bad;
+        }
+      }
+
+      /*
+       * BOTTOM LEFT CORNER
+       * Line.
+        */
+      else if (pos == BOTTOM_LEFT_CORNER + 1)
+      {
+        if (reversi->array[BOTTOM_LEFT_CORNER] == player)
+        {
+          n += Ggood;
+        } else {
+          for (pos_bis = pos + 1, c = 1;
+            pos_bis <= BOTTOM_RIGHT_CORNER && reversi->array[pos_bis] == player;
+            ++pos_bis, ++c);
+
+          if (pos_bis > BOTTOM_RIGHT_CORNER)
+          {
+            n += GGood;
+          } else {
+            if (reversi->array[pos_bis] == player2)
+            {
+              if (reversi->array[BOTTOM_LEFT_CORNER] == player2)
+              {
+                n += GGood;
+              } else {
+                n += (c * Bad);
+              }
+            } else {
+              if (reversi->array[BOTTOM_LEFT_CORNER] == player2)
+              {
+                n += (c * Bad);
+              } else {
+                n += (c * bad);
+              }
+            }
+          }
+        }
+      }
+
+      /*
+       * BOTTOM LEFT CORNER.
+       * Column.
+        */
+      else if (pos == BOTTOM_LEFT_CORNER - REVERSI_SIZE)
+      {
+        if (reversi->array[BOTTOM_LEFT_CORNER] == player)
+        {
+          n += Ggood;
+        } else {
+          for (pos_bis = pos - REVERSI_SIZE, c = 1;
+            pos_bis >= TOP_LEFT_CORNER && reversi->array[pos_bis] == player;
+            pos_bis -= REVERSI_SIZE, ++c);
+
+          if (pos_bis < BOTTOM_LEFT_CORNER)
+          {
+            n += GGood;
+          } else {
+            if (reversi->array[pos_bis] == player2)
+            {
+              if (reversi->array[TOP_LEFT_CORNER] == player2)
+              {
+                n += GGood;
+              } else {
+                n += (c * Bad);
+              }
+            } else {
+              if (reversi->array[TOP_LEFT_CORNER] == player2)
+              {
+                n += (c * Bad);
+              } else {
+                n += (c * bad);
+              }
+            }
+          }
+        }
+      }
+
+      /*
+       * BOTTOM LEFT CORNER.
+       * Diagonal.
+        */
+      else if (pos == BOTTOM_LEFT_CORNER - REVERSI_SIZE + 1)
+      {
+        if (reversi->array[BOTTOM_LEFT_CORNER] == player)
+        {
+          n += good;
+        } else {
+          n += Bad;
+        }
+      }
+
+      /*
+       * BOTTOM RIGHT CORNER
+       * Line.
+        */
+      else if (pos == BOTTOM_RIGHT_CORNER - 1)
+      {
+        if (reversi->array[BOTTOM_RIGHT_CORNER] == player)
+        {
+          n += Ggood;
+        } else {
+          for (pos_bis = pos - 1, c = 1;
+            pos_bis >= BOTTOM_LEFT_CORNER && reversi->array[pos_bis] == player;
+            --pos_bis, ++c);
+
+          if (pos_bis < BOTTOM_LEFT_CORNER)
+          {
+            n += GGood;
+          } else {
+            if (reversi->array[pos_bis] == player2)
+            {
+              if (reversi->array[BOTTOM_RIGHT_CORNER] == player2)
+              {
+                n += GGood;
+              } else {
+                n += (c * Bad);
+              }
+            } else {
+              if (reversi->array[BOTTOM_RIGHT_CORNER] == player2)
+              {
+                n += (c * Bad);
+              } else {
+                n += (c * bad);
+              }
+            }
+          }
+        }
+      }
+
+      /*
+       * BOTTOM RIGHT CORNER.
+       * Column.
+        */
+      else if (pos == BOTTOM_RIGHT_CORNER - REVERSI_SIZE)
+      {
+        if (reversi->array[BOTTOM_RIGHT_CORNER] == player)
+        {
+          n += Ggood;
+        } else {
+          for (pos_bis = pos - REVERSI_SIZE, c = 1;
+            pos_bis >= TOP_RIGHT_CORNER && reversi->array[pos_bis] == player;
+            pos_bis -= REVERSI_SIZE, ++c);
+
+          if (pos_bis < TOP_RIGHT_CORNER)
+          {
+            n += GGood;
+          } else {
+            if (reversi->array[pos_bis] == player2)
+            {
+              if (reversi->array[BOTTOM_RIGHT_CORNER] == player2)
+              {
+                n += GGood;
+              } else {
+                n += (c * Bad);
+              }
+            } else {
+              n += (c * Bad);
+            }
+          }
+        }
+      }
+
+      /*
+       * BOTTOM RIGHT CORNER.
+       * Diagonal.
+        */
+      else if (pos == BOTTOM_RIGHT_CORNER - REVERSI_SIZE - 1)
+      {
+        if (reversi->array[BOTTOM_RIGHT_CORNER] == player)
+        {
+          n += good;
+        } else {
+          n += Bad;
+        }
+      }
+
+      /*
+       * Else we need to some calculation if it's on a border.
+       * And if not we need to calculate the Degree of freedom.
+        */
+      else {
+        n += good;
+      }
+
+      /*
+       * End of the loop.
+        */
+    }
+  }
+  return n;
 }
