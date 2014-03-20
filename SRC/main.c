@@ -101,7 +101,7 @@ void ia_vs_player(void)
     }
     else
     {
-      printf("L'IA a jouée : %c%d\n", pos.y + 'A' , pos.x + 1);
+      printf("L'IA a jouée : %d%c\n", pos.y + 1, pos.x + 'A');
       reversi_set_ia_move(reversi, INV_PLAYER(player), &pos);
     }
 
@@ -121,19 +121,16 @@ void ia_vs_player(void)
 
 void ia_vs_ia(void)
 {
-  Player player = PLAYER_1; /* Joueur courant. */
-  Pos pos;
- /* Position coup. */
+  Pos pos; /* Position coup. */
 
-  Reversi *reversi;   /* Grille de jeu. */
+  Reversi reversi;    /* Grille de jeu. */
   Config *config;     /* Config serveur. */
   TCP *socket = NULL; /* Socket client. */
 
+  char buffer[66]; /* Données socket. */
+
   /* Initialisation des sockets. */
   INIT_SOCKET();
-
-  /* Création d'une grille de jeu. */
-  reversi = reversi_new();
 
   /* Mise en place d'un signal d'interruption. */
   signal(SIGINT, handler);
@@ -157,25 +154,31 @@ void ia_vs_ia(void)
   /* Point de sauvegarde de la pile pour un éventuel SIGINT. */
   setjmp(jbuf);
 
+  /* Départ de la grille de jeu par rapport au buffer. */
+  reversi.array = buffer + 2;
+
   while(run)
   {
-    reversi_print(reversi);
-    /* reversi_set_player_move(reversi, player); */
+    /* Réception de la grille. */
+    if(tcp_recv(socket, buffer, sizeof(buffer)) <= 0)
+    {
+      fprintf(stderr, "You killed me !\n");
+      exit(EXIT_FAILURE);
+    }
 
-    pos = ia_alphabeta(reversi, player, 5);
-    reversi_set_ia_move(reversi, player, &pos);
-    printf("L'IA 1 a joué : %c%d (%u coups)\n", pos.y + 'A' , pos.x + 1, reversi->n_moves);
+    if(*buffer == 'T')
+      continue; /* Fin de partie. */
 
-    reversi_print(reversi);
+    /* Coup à jouer. */
+    pos = ia_alphabeta(&reversi, *buffer, 5);
+    buffer[0] = POS(pos.x, pos.y);
+    tcp_send(socket, buffer, 1);
 
-  pos = ia_alphabeta(reversi, INV_PLAYER(player), 5);
-    reversi_set_ia_move(reversi, INV_PLAYER(player), &pos);
-
-    printf("L'IA 2 a joué : %c%d (%u coups)\n", pos.y + 'A' , pos.x + 1, reversi->n_moves);
+    #ifdef DEBUG
+      reversi_print(&reversi);
+      printf("L'IA a jouée : %d%c\n", pos.y + 1, pos.x + 'A');
+    #endif
   }
-
-  /* Libération de la grille. */
-  reversi_free(reversi);
 
   /* Fermeture socket client. */
   tcp_close(socket);

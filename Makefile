@@ -25,7 +25,7 @@ endif
 
 SRC = $(foreach dir, $(SRC_DIR), $(wildcard $(dir)/*.c))
 OBJ = $(addsuffix .o, $(basename $(subst ${SRC_DIR}, ${OBJ_DIR}, ${SRC})))
-BIN = tp1
+BIN = othello
 
 # Make
 

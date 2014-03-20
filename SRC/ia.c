@@ -62,7 +62,7 @@ int ia_eval_grid(Reversi *reversi, Player player)
 
 
 /*
- * AI function but with alpha-beta pruning. 
+ * AI function but with alpha-beta pruning.
   */
 Pos ia_alphabeta (Reversi *reversi, Player player, int depth)
 {
@@ -78,11 +78,18 @@ Pos ia_alphabeta (Reversi *reversi, Player player, int depth)
   bestPos.x = -1;
   bestPos.y = -1;
 
+  /* A VIRER DE TOUTE URGENCE :
+     - Peut couper le client du serveur !
+     - Est redondant avec les autres fonctions de vérifications.
+     - L'IA doit se concentrer sur les calculs par sur l'entrée des données.
+
   if (depth == 0 || reversi_game_over(reversi))
   {
     fprintf(stderr, "How the fuck do you want me to return to you anything, if I can't do any fucking calculation ?!\n");
     exit(EXIT_FAILURE);
   }
+
+  */
 
   for(j = 0; j < REVERSI_SIZE; j++)
   {

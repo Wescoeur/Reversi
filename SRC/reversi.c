@@ -60,36 +60,35 @@ void reversi_free(Reversi *reversi)
     printf("---+\n");                  \
   } while(0)                           \
 
-#define __REVERSI_DRAW_NUMBER__(I)      \
-  do {                                  \
-    printf("     ");                    \
-                                        \
-    for(I = 1; I <= REVERSI_SIZE; I++)  \
-      printf(" %d  ", I);               \
+#define __REVERSI_DRAW_CHAR__(I)      \
+  do {                                \
+    printf("     ");                  \
+                                      \
+    for(I = 0; I < REVERSI_SIZE; I++) \
+      printf(" %c  ", I + 'A');       \
   } while(0)
 
 void reversi_print(Reversi *reversi)
 {
   unsigned int i, j, k = 0;
-  char c = 'A';
 
   printf("\n");
-  __REVERSI_DRAW_NUMBER__(i);
+  __REVERSI_DRAW_CHAR__(i);
   __REVERSI_DRAW_LINE__(i);
 
   for(j = 1; j <= REVERSI_SIZE; j++)
   {
-    printf("  %c |", c);
+    printf("  %d |", j);
 
     for(i = 1; i <= REVERSI_SIZE; i++, k++)
         printf(" %c |", reversi->array[k] ? reversi->array[k] : ' ');
 
-    printf(" %c", c++);
+    printf(" %d", j);
 
     __REVERSI_DRAW_LINE__(i);
   }
 
-  __REVERSI_DRAW_NUMBER__(i);
+  __REVERSI_DRAW_CHAR__(i);
   printf("\n\n");
 
   return;
@@ -339,8 +338,8 @@ int reversi_set_player_move(Reversi *reversi, Player player)
 
     if(__is_a_valid_str(buf) == 0)
     {
-      pos.y = buf[0];
-      pos.x = buf[1];
+      pos.y = buf[1];
+      pos.x = buf[0];
 
       /* Si le mouvement est possible, on joue. */
       if(reversi_is_a_right_move(reversi, player, &pos))
@@ -370,7 +369,7 @@ int reversi_set_ia_move(Reversi *reversi, Player player, Pos *pos)
 
 int reversi_game_over(Reversi *reversi)
 {
-  Player p = PLAYER_1; 
+  Player p = PLAYER_1;
   Pos pos;
 
   if(reversi->n_moves == 0)
