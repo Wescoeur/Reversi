@@ -12,19 +12,6 @@
 #include "reversi.h"
 #include "ia.h"
 
-#define MIN(A,B) (((A) < (B)) ? (A) : (B))
-#define MAX(A,B) (((A) > (B)) ? (A) : (B))
-
-/** Grille d'évaluation de l'IA. */
-static const int grid[] = {600, -150, 30, 10, 10, 30, -150, 600,
-                           -150, -250, 0, 0, 0, 0, -250, -150,
-                           30, 0, 1, 2, 2, 1, 0, 30,
-                           10, 0, 2, 16, 16, 2, 0, 10,
-                           10, 0, 2, 16, 16, 2, 0, 10,
-                           10, 0, 1, 2, 2, 1, 0, 30,
-                           -150, -250, 0, 0, 0, 0, -250, -150,
-                           600, -150, 30, 10, 10, 30, -150, 600};
-
 /** Copie une grille de jeu. */
 /* @param reversi : Grille à copier. */
 /* @return : Une copie de grille. */

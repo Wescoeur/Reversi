@@ -12,9 +12,6 @@
 #include "reversi.h"
 #include "ia.h"
 
-#define MIN(A,B) (((A) < (B)) ? (A) : (B))
-#define MAX(A,B) (((A) > (B)) ? (A) : (B))
-
 /** Copie une grille de jeu. */
 /* @param reversi : Grille à copier. */
 /* @return : Une copie de grille. */
