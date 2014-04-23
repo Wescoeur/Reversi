@@ -60,6 +60,13 @@ Pos iaV3_alphabeta (Reversi *reversi, Player player, int depth)
       reversiCpy = __grid_copy(reversi);
       if (reversi_set_ia_move(reversiCpy, player, &playedPos))
       {
+        if (IS_CORNER(POS(i,j)))
+        {
+          bestPos.x = i;
+          bestPos.y = j;
+          reversi_free(reversiCpy);
+          return bestPos;
+        }
         temp = iaV3_alphabeta_bis(reversiCpy, depth - 1, alpha, beta, INV_PLAYER(player), 0);
         if (temp >= alpha)
         {
@@ -115,7 +122,7 @@ int iaV3_alphabeta_bis (Reversi *reversi, int depth, int alpha, int beta, Player
         reversi_free(reversiCpy);
       }
     }
-    return alpha;
+    return alpha; 
   }
 
   for(j = 0; j < REVERSI_SIZE; j++)
@@ -146,30 +153,34 @@ int iaV3_alphabeta_bis (Reversi *reversi, int depth, int alpha, int beta, Player
 
 int iaV3_eval_grid(Reversi *reversi, Player player)
 {
-	int nb_moves_enemy = 1, x, nb_pawn = 1;
+	int nb_moves = 1, x, nb_pawn = 1;
 	Pos pos;
 
-	if (reversi->n_moves <= 10 )
+	if (reversi->n_moves <= 15 )
 	{
 		/* 10 derniers coups */
 		for(pos.x = 0; pos.x < REVERSI_SIZE; pos.x++)
 			for(pos.y = 0; pos.y < REVERSI_SIZE; pos.y++)
-				if(reversi_is_a_right_move(reversi, player, &pos))
-					++nb_moves_enemy;
+				if(reversi_is_a_right_move(reversi, INV_PLAYER(player), &pos))
+					++nb_moves;
 
-		return 100 / nb_moves_enemy;
-	} else if (reversi->n_moves >= REVERSI_SIZE * REVERSI_SIZE - 10 ) {
+		return 100 / nb_moves;
+	} else if (reversi->n_moves >= REVERSI_SIZE * REVERSI_SIZE - 15 ) {
 		/* 10 premiers coups */
 		for(x = 0; x < REVERSI_SIZE * REVERSI_SIZE; x++)
 			if(reversi->array[x] == player)
 				++nb_pawn;
 
-		if(nb_pawn == 1)
-			return -100;
+		if(nb_pawn == 2)
+			return INT_MIN;
 
 		return 100 / nb_pawn;
 	} else {
-		return ia_eval_grid_2(reversi, player);
+		for(pos.x = 0; pos.x < REVERSI_SIZE; pos.x++)
+      for(pos.y = 0; pos.y < REVERSI_SIZE; pos.y++)
+        if(reversi_is_a_right_move(reversi, player, &pos))
+          ++nb_moves; 
+    return nb_moves;
 	}
 	return 1;
 }
