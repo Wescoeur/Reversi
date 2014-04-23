@@ -12,7 +12,7 @@
 \usepackage{perpage}
 \MakePerPage{footnote}
 
-\geometry{hscale=0.75,vscale=0.8,centering}
+\geometry{hscale=0.7,vscale=0.7,centering}
 \title{Projet Othello}
 
 \author{\bsc{Kevin Hivert} \bsc{Ronan Abhamon}}
@@ -21,14 +21,13 @@
 \begin{document}
 \selectlanguage{frenchb}
 \maketitle
-\tableofcontents
 
 \section{Fonctionnalités}
 \noindent
 Notre programme permet de choisir entre 2 types de parties, joueur humain contre IA et IA contre IA via un serveur suivant les normes officielles définies en début de semestre.
 Le premier type de jeu n'étant pas le but du projet il ne permet de faire qu'une seule partie puis quitte le programme. Durant les phases de développement ce mode à été modifié afin de faire jouer deux versions d'IA différentes l'une contre l'autre (Simplement en appelant la fonction d'une autre version de l'IA plutôt que la fonction permettant au joueur de donner une position ou placer un pion).
-Le second type de partie, permet de ce connecter à un serveur d'othello et de commencer une partie contre une autre IA.
-Étant donné que les deux groupes qui étaient chargés des serveurs n'ont pas pu nous fournir quelque-chose de fonctionnel (la connexions ne fonctionne pas toujours correctement et le tableau reçut n'est pas toujours correct) et qu'ils ne respectaient pas les normes fixés au début du projet (entre autres en imposant l'envoi de "\n"), les tests ont été effectués sur un serveur fonctionnel et respectant les normes, fait par M. Alexis Braine, sur lequel nous avons pu tester notre programme et affronter de nombreuses autres IA.
+~\par Le second type de partie, permet de ce connecter à un serveur d'othello et de commencer une partie contre une autre IA.
+Étant donné que les deux groupes qui étaient chargés des serveurs n'ont pas pu nous fournir quelque-chose de fonctionnel (la connexions ne fonctionne pas toujours correctement et le tableau reçut n'est pas toujours correct) et qu'ils ne respectaient pas les normes fixés au début du projet (entre autres en imposant l'envoi de "$\backslash$n"), les tests ont été effectués sur un serveur fonctionnel et respectant les normes, fait par M. Alexis Braine, sur lequel nous avons pu tester notre programme et affronter de nombreuses autres IA.
 
 \section{Évolutions du programme}
 \noindent
