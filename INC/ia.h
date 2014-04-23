@@ -41,4 +41,8 @@ Pos iaV3_alphabeta (Reversi *reversi, Player player, int depth);
 int iaV3_alphabeta_bis (Reversi *reversi, int depth, int alpha, int beta, Player player, int maximizingPlayer);
 int iaV3_eval_grid(Reversi *reversi, Player player);
 
+
+Pos iaV4_alphabeta (Reversi *reversi, Player player, int depth);
+int iaV4_alphabeta_bis (Reversi *reversi, int depth, int alpha, int beta, Player player, int maximizingPlayer);
+int iaV4_eval_grid(Reversi *reversi, Player player);
 #endif /* _IA_H_ INCLUDED */
