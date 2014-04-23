@@ -92,7 +92,7 @@ void ia_vs_player(void)
       reversi_print(reversi);
 
     /* Coup de l'IA. */
-    pos = ia_alphabeta(reversi, INV_PLAYER(player), IA_LEVEL);
+    pos = iaV3_alphabeta(reversi, INV_PLAYER(player), IA_LEVEL);
 
     if(pos.x == -1 && pos.y == -1)
     {
@@ -172,7 +172,7 @@ void ia_vs_ia(void)
       break; /* Fin de partie. */
 
     /* Coup à jouer. */
-    pos = ia_alphabeta(&reversi, *buffer, 5);
+    pos = iaV3_alphabeta(&reversi, *buffer, 5);
     buffer[0] = POS(pos.x, pos.y);
     tcp_send(socket, buffer, 1);
 
