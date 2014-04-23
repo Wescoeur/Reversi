@@ -15,17 +15,6 @@
 #define MIN(A,B) (((A) < (B)) ? (A) : (B))
 #define MAX(A,B) (((A) > (B)) ? (A) : (B))
 
-/** Grille d'évaluation de l'IA. */
-static const int grid[] = {500, -150, 30, 10, 10, 30, -150, 500,
-                           -150, -250, 0, 0, 0, 0, -250, -150,
-                           30, 0, 1, 2, 2, 1, 0, 30,
-                           10, 0, 2, 16, 16, 2, 0, 10,
-                           10, 0, 2, 16, 16, 2, 0, 10,
-                           10, 0, 1, 2, 2, 1, 0, 30,
-                           -150, -250, 0, 0, 0, 0, -250, -150,
-                           500, -150, 30, 10, 10, 30, -150, 500};
-
-
 /** Copie une grille de jeu. */
 /* @param reversi : Grille à copier. */
 /* @return : Une copie de grille. */
@@ -107,7 +96,7 @@ int ia_eval_min (Reversi *reversi, Player player, int depth)
 
 int ia_eval_max(Reversi *reversi, Player player, int depth)
 {
-  int i, j, bestScore = INT_MAX, score;
+  int i, j, bestScore = INT_MIN, score;
   Pos playedPos;
   Reversi *reversiCpy = NULL;
   if (depth == 0 || reversi_game_over(reversi))

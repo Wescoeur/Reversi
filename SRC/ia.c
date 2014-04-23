@@ -25,7 +25,6 @@ static const int grid[] = {600, -150, 30, 10, 10, 30, -150, 600,
                            -150, -250, 0, 0, 0, 0, -250, -150,
                            600, -150, 30, 10, 10, 30, -150, 600};
 
-
 /** Copie une grille de jeu. */
 /* @param reversi : Grille à copier. */
 /* @return : Une copie de grille. */
@@ -41,25 +40,13 @@ static Reversi *__grid_copy(Reversi *reversi)
   */
 int ia_eval_grid(Reversi *reversi, Player player)
 {
-  int i, j, pos, n = 0;
-  Player player2 = INV_PLAYER(player);
+  int i, n = 0;
 
-  for(j = 0; j < REVERSI_SIZE; j++)
-  {
-    for(i = 0; i < REVERSI_SIZE; i++)
-    {
-      pos = POS(i, j);
-      if (reversi->array[pos] == player)
-      {
-        n += grid[pos];
-      } else if (reversi->array[pos] == player2) {
-        n -= grid[pos];
-      }
-    }
-  }
-  return n;
+  for(i = 0; i < REVERSI_SIZE * REVERSI_SIZE; i++)
+    n += reversi->array[i] == player ? grid[i] : -grid[i];
+
+  return 0;
 }
-
 
 /*
  * AI function but with alpha-beta pruning.

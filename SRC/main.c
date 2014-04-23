@@ -14,6 +14,7 @@
 #include "config.h"
 #include "reversi.h"
 #include "ia.h"
+#include "negamax.h"
 
 /** Nom du fichier de configuration. */
 #define CONFIG_FILENAME "config"
@@ -80,24 +81,19 @@ void ia_vs_player(void)
   while(run)
   {
     finish = 2;
-    /*reversi_print(reversi);*/
+    reversi_print(reversi);
 
     /* Coup du joueur. */
-    pos = iaV3_alphabeta(reversi, player, IA_LEVEL);
-
-    if(pos.x == -1 && pos.y == -1)
+    if(reversi_set_player_move(reversi, player) == -1)
     {
       printf("Aucun coup n'est jouable pour le joueur %c.\n", player);
       finish--;
     }
     else
-    {
-      printf("L'IA 1 a jouée : %d%c\n", pos.y + 1, pos.x + 'A');
-      reversi_set_ia_move(reversi, player, &pos);
-    }
+      reversi_print(reversi);
 
     /* Coup de l'IA. */
-    pos = iaV4_alphabeta(reversi, INV_PLAYER(player), 7);
+    ia_negamax(reversi, INV_PLAYER(player), IA_LEVEL, -100000, +100000, &pos);
 
     if(pos.x == -1 && pos.y == -1)
     {
@@ -173,11 +169,16 @@ void ia_vs_ia(void)
       exit(EXIT_FAILURE);
     }
 
+    #ifdef DEBUG
+      printf("Je suis %c !\n", *buffer);
+    #endif
+
     if(*buffer == 'T')
       break; /* Fin de partie. */
 
     /* Coup à jouer. */
-    pos = iaV3_alphabeta(&reversi, *buffer, 5);
+    ia_negamax(&reversi, *buffer, 7, -100000, +100000, &pos);
+
     buffer[0] = POS(pos.x, pos.y);
     tcp_send(socket, buffer, 1);
 
