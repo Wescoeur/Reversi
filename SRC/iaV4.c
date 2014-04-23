@@ -151,12 +151,34 @@ int iaV4_alphabeta_bis (Reversi *reversi, int depth, int alpha, int beta, Player
   return beta;
 }
 
+int __liberty_level(Reversi *reversi, int pos)
+{
+  int n = 0;
+  if (reversi->array[pos - REVERSI_SIZE - 1] == 0)
+    ++n;
+  if (reversi->array[pos - REVERSI_SIZE] == 0)
+    ++n;
+  if (reversi->array[pos - REVERSI_SIZE + 1] == 0)
+    ++n;
+  if (reversi->array[pos - 1] == 0)
+    ++n;
+  if (reversi->array[pos + 1] == 0)
+    ++n;
+  if (reversi->array[pos + REVERSI_SIZE - 1] == 0)
+    ++n;
+  if (reversi->array[pos + REVERSI_SIZE] == 0)
+    ++n;
+  if (reversi->array[pos + REVERSI_SIZE + 1] == 0)
+    ++n;
+return n;
+}
+
 int iaV4_eval_grid(Reversi *reversi, Player player)
 {
 	int nb_moves = 1, x, nb_pawn = 1;
 	Pos pos;
 
-	if (reversi->n_moves <= 15 )
+	if (reversi->n_moves <= 18 )
 	{
 		/* 10 derniers coups */
 		for(pos.x = 0; pos.x < REVERSI_SIZE; pos.x++)
@@ -165,14 +187,11 @@ int iaV4_eval_grid(Reversi *reversi, Player player)
 					++nb_moves;
 
 		return 1000 / nb_moves;
-	} else if (reversi->n_moves >= REVERSI_SIZE * REVERSI_SIZE - 15 ) {
+	} else if (reversi->n_moves >= REVERSI_SIZE * REVERSI_SIZE - 18 ) {
 		/* 10 premiers coups */
 		for(x = 0; x < REVERSI_SIZE * REVERSI_SIZE; x++)
 			if(reversi->array[x] == player)
-        ++nb_pawn;
-
-		if(nb_pawn == 2)
-			return INT_MIN;
+        nb_pawn += __liberty_level(reversi, x);
 
 		return 1000 / nb_pawn;
 	} else {
