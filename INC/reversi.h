@@ -33,6 +33,7 @@ typedef char Player;
 #define TOP_RIGHT_CORNER    (REVERSI_SIZE - 1)
 #define BOTTOM_LEFT_CORNER  (REVERSI_SIZE * (REVERSI_SIZE - 1))
 #define BOTTOM_RIGHT_CORNER ((REVERSI_SIZE * REVERSI_SIZE) -1)
+#define IS_CORNER(X)        ((X) == TOP_LEFT_CORNER || (X) == TOP_RIGHT_CORNER || (X) == BOTTOM_LEFT_CORNER || (X) == BOTTOM_RIGHT_CORNER)
 
 /** Position d'un pion en (x, y) */
 #define POS(X, Y) (REVERSI_SIZE * (Y) + X)
