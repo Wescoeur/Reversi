@@ -78,19 +78,6 @@ Pos ia_alphabeta (Reversi *reversi, Player player, int depth)
   bestPos.x = -1;
   bestPos.y = -1;
 
-  /* A VIRER DE TOUTE URGENCE :
-     - Peut couper le client du serveur !
-     - Est redondant avec les autres fonctions de vérifications.
-     - L'IA doit se concentrer sur les calculs par sur l'entrée des données.
-
-  if (depth == 0 || reversi_game_over(reversi))
-  {
-    fprintf(stderr, "How the fuck do you want me to return to you anything, if I can't do any fucking calculation ?!\n");
-    exit(EXIT_FAILURE);
-  }
-
-  */
-
   for(j = 0; j < REVERSI_SIZE; j++)
   {
     for(i = 0; i < REVERSI_SIZE; i++)
@@ -191,7 +178,7 @@ int ia_alphabeta_bis (Reversi *reversi, int depth, int alpha, int beta, Player p
 int ia_eval_grid_2(Reversi *reversi, Player player)
 {
   int pos, pos_bis, n = 0, c;
-  int GGood = 512, Ggood = 32, ggood = 16, good = 8, not_bad = 0, bad = -256, Bad = -1024;
+  int GGood = 512, Ggood = 32, /*ggood = 16,*/ good = 8, /*not_bad = 0,*/ bad = -256, Bad = -1024;
   Player player2 = INV_PLAYER(player);
 
   for (pos = 0; pos < REVERSI_SIZE * REVERSI_SIZE; ++pos)

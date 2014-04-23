@@ -26,11 +26,19 @@ int ia_eval_max(Reversi *reversi, Player player, int depth);
 Pos ia_alphabeta (Reversi *reversi, Player player, int depth);
 int ia_alphabeta_bis (Reversi *reversi, int depth, int alpha, int beta, Player player, int maximizingPlayer);
 
+
 /*
  * Grid evaluation, giving a value to each cells.
   */
 int ia_eval_grid(Reversi *reversi, Player player);
 
 int ia_eval_grid_2(Reversi *reversi, Player player);
+
+/*
+ * V3.
+  */
+Pos iaV3_alphabeta (Reversi *reversi, Player player, int depth);
+int iaV3_alphabeta_bis (Reversi *reversi, int depth, int alpha, int beta, Player player, int maximizingPlayer);
+int iaV3_eval_grid(Reversi *reversi, Player player);
 
 #endif /* _IA_H_ INCLUDED */
