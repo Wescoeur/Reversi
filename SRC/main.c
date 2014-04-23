@@ -168,7 +168,7 @@ void ia_vs_ia(void)
       exit(EXIT_FAILURE);
     }
 
-    if(*buffer == 'F')
+    if(*buffer == 'T')
       break; /* Fin de partie. */
 
     /* Coup à jouer. */
