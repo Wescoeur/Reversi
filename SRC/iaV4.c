@@ -1,5 +1,5 @@
 /* ---------------------------------------------------------------------- */
-/* Filename: iaV3.c                                                         */
+/* Filename: iaV4.c                                                         */
 /* Authors: ABHAMON Ronan - HIVERT Kevin                                  */
 /* Date: 2014-02-07 - 08:04:20                                            */
 /*                                                                        */
@@ -36,7 +36,7 @@ static Reversi *__grid_copy(Reversi *reversi)
   return cpy;
 }
 
-Pos iaV3_alphabeta (Reversi *reversi, Player player, int depth)
+Pos iaV4_alphabeta (Reversi *reversi, Player player, int depth)
 {
   int i, j, temp;
   Reversi *reversiCpy = NULL;
@@ -60,7 +60,14 @@ Pos iaV3_alphabeta (Reversi *reversi, Player player, int depth)
       reversiCpy = __grid_copy(reversi);
       if (reversi_set_ia_move(reversiCpy, player, &playedPos))
       {
-        temp = iaV3_alphabeta_bis(reversiCpy, depth - 1, alpha, beta, INV_PLAYER(player), 0);
+        if (IS_CORNER(POS(i,j)))
+        {
+          bestPos.x = i;
+          bestPos.y = j;
+          reversi_free(reversiCpy);
+          return bestPos;
+        }
+        temp = iaV4_alphabeta_bis(reversiCpy, depth - 1, alpha, beta, INV_PLAYER(player), 0);
         if (temp >= alpha)
         {
           alpha = temp;
@@ -75,7 +82,7 @@ Pos iaV3_alphabeta (Reversi *reversi, Player player, int depth)
 }
 
 
-int iaV3_alphabeta_bis (Reversi *reversi, int depth, int alpha, int beta, Player player, int maximizingPlayer)
+int iaV4_alphabeta_bis (Reversi *reversi, int depth, int alpha, int beta, Player player, int maximizingPlayer)
 {
   int i,j;
   Reversi *reversiCpy = NULL;
@@ -83,7 +90,7 @@ int iaV3_alphabeta_bis (Reversi *reversi, int depth, int alpha, int beta, Player
 
   if (depth == 0 || reversi_game_over(reversi))
   {
-    return iaV3_eval_grid(reversi, player);
+    return iaV4_eval_grid(reversi, player);
   }
 
   if (maximizingPlayer)
@@ -102,7 +109,7 @@ int iaV3_alphabeta_bis (Reversi *reversi, int depth, int alpha, int beta, Player
            * If the position is playable, then we put a disk on this position and do
            * the recursiv call.
             */
-          alpha = MAX(alpha, iaV3_alphabeta_bis(reversiCpy, depth - 1, alpha, beta, INV_PLAYER(player), 0));
+          alpha = MAX(alpha, iaV4_alphabeta_bis(reversiCpy, depth - 1, alpha, beta, INV_PLAYER(player), 0));
           if (beta <= alpha)
           {
             /*
@@ -115,7 +122,7 @@ int iaV3_alphabeta_bis (Reversi *reversi, int depth, int alpha, int beta, Player
         reversi_free(reversiCpy);
       }
     }
-    return alpha;
+    return alpha; 
   }
 
   for(j = 0; j < REVERSI_SIZE; j++)
@@ -128,7 +135,7 @@ int iaV3_alphabeta_bis (Reversi *reversi, int depth, int alpha, int beta, Player
       reversiCpy = __grid_copy(reversi);
       if (reversi_set_ia_move(reversiCpy, player, &playedPos))
       {
-        beta = MIN(beta, iaV3_alphabeta_bis(reversiCpy, depth - 1, alpha, beta, INV_PLAYER(player), 1));
+        beta = MIN(beta, iaV4_alphabeta_bis(reversiCpy, depth - 1, alpha, beta, INV_PLAYER(player), 1));
         if (beta <= alpha)
         {
           /*
@@ -144,9 +151,9 @@ int iaV3_alphabeta_bis (Reversi *reversi, int depth, int alpha, int beta, Player
   return beta;
 }
 
-int iaV3_eval_grid(Reversi *reversi, Player player)
+int iaV4_eval_grid(Reversi *reversi, Player player)
 {
-	int nb_moves_enemy = 1, x, nb_pawn = 1;
+	int nb_moves = 1, x, nb_pawn = 1;
 	Pos pos;
 
 	if (reversi->n_moves <= 15 )
@@ -154,22 +161,26 @@ int iaV3_eval_grid(Reversi *reversi, Player player)
 		/* 10 derniers coups */
 		for(pos.x = 0; pos.x < REVERSI_SIZE; pos.x++)
 			for(pos.y = 0; pos.y < REVERSI_SIZE; pos.y++)
-				if(reversi_is_a_right_move(reversi, player, &pos))
-					++nb_moves_enemy;
+				if(reversi_is_a_right_move(reversi, INV_PLAYER(player), &pos))
+					++nb_moves;
 
-		return 100 / nb_moves_enemy;
+		return 1000 / nb_moves;
 	} else if (reversi->n_moves >= REVERSI_SIZE * REVERSI_SIZE - 15 ) {
 		/* 10 premiers coups */
 		for(x = 0; x < REVERSI_SIZE * REVERSI_SIZE; x++)
 			if(reversi->array[x] == player)
-				++nb_pawn;
+        ++nb_pawn;
 
-		if(nb_pawn == 1)
-			return -100;
+		if(nb_pawn == 2)
+			return INT_MIN;
 
-		return 100 / nb_pawn;
+		return 1000 / nb_pawn;
 	} else {
-		return ia_eval_grid_2(reversi, player);
+		for(x = 0; x < REVERSI_SIZE * REVERSI_SIZE; x++)
+        if(reversi->array[x] == INV_PLAYER(player))
+          ++nb_pawn;
+
+    return ia_eval_grid(reversi, player) - nb_pawn;
 	}
 	return 1;
 }

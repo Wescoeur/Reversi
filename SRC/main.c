@@ -80,19 +80,24 @@ void ia_vs_player(void)
   while(run)
   {
     finish = 2;
-    reversi_print(reversi);
+    /*reversi_print(reversi);*/
 
     /* Coup du joueur. */
-    if(reversi_set_player_move(reversi, player) == -1)
+    pos = iaV3_alphabeta(reversi, player, IA_LEVEL);
+
+    if(pos.x == -1 && pos.y == -1)
     {
       printf("Aucun coup n'est jouable pour le joueur %c.\n", player);
       finish--;
     }
     else
-      reversi_print(reversi);
+    {
+      printf("L'IA 1 a jouée : %d%c\n", pos.y + 1, pos.x + 'A');
+      reversi_set_ia_move(reversi, player, &pos);
+    }
 
     /* Coup de l'IA. */
-    pos = iaV3_alphabeta(reversi, INV_PLAYER(player), IA_LEVEL);
+    pos = iaV4_alphabeta(reversi, INV_PLAYER(player), 7);
 
     if(pos.x == -1 && pos.y == -1)
     {
@@ -101,7 +106,7 @@ void ia_vs_player(void)
     }
     else
     {
-      printf("L'IA a jouée : %d%c\n", pos.y + 1, pos.x + 'A');
+      printf("L'IA 2 (%c) a jouée : %d%c\n", INV_PLAYER(player), pos.y + 1, pos.x + 'A');
       reversi_set_ia_move(reversi, INV_PLAYER(player), &pos);
     }
 
