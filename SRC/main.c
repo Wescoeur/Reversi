@@ -132,9 +132,6 @@ void ia_vs_ia(void)
   /* Initialisation des sockets. */
   INIT_SOCKET();
 
-  /* Mise en place d'un signal d'interruption. */
-  signal(SIGINT, handler);
-
   /* Chargement de la configuration du client. */
   config = config_load(CONFIG_FILENAME);
 
@@ -142,6 +139,8 @@ void ia_vs_ia(void)
   if((socket = tcp_get(&config->ip)) == NULL)
   {
     perror("Socket");
+    free(config);
+
     exit(EXIT_FAILURE);
   }
 
@@ -150,6 +149,9 @@ void ia_vs_ia(void)
 
   /* Libération de la configuration. */
   free(config);
+
+  /* Mise en place d'un signal d'interruption. */
+  signal(SIGINT, handler);
 
   /* Point de sauvegarde de la pile pour un éventuel SIGINT. */
   setjmp(jbuf);
@@ -166,8 +168,8 @@ void ia_vs_ia(void)
       exit(EXIT_FAILURE);
     }
 
-    if(*buffer == 'T')
-      continue; /* Fin de partie. */
+    if(*buffer == 'F')
+      break; /* Fin de partie. */
 
     /* Coup à jouer. */
     pos = ia_alphabeta(&reversi, *buffer, 5);

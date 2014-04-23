@@ -2,7 +2,6 @@
 /* Filename: config.h                                                     */
 /* Author: ABHAMON Ronan                                                  */
 /* Date: 2014-03-12 - 15:16:54                                            */
-/* Site: https://github.com/Wescoeur                                      */
 /*                                                                        */
 /* ---------------------------------------------------------------------- */
 

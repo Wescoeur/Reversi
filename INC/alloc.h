@@ -2,7 +2,6 @@
 /* Filename: alloc.h                                                      */
 /* Author: ABHAMON Ronan                                                  */
 /* Date: 2014-02-14 - 14:34:41                                            */
-/* Site: https://github.com/Wescoeur                                      */
 /*                                                                        */
 /* ---------------------------------------------------------------------- */
 

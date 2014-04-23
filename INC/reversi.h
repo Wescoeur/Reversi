@@ -29,9 +29,9 @@ typedef char Player;
 #define END_DOWN(P)  (P / REVERSI_SIZE == REVERSI_SIZE - 1)
 
 /** Valeurs des coins. */
-#define TOP_LEFT_CORNER 0
-#define TOP_RIGHT_CORNER (REVERSI_SIZE - 1)
-#define BOTTOM_LEFT_CORNER (REVERSI_SIZE * (REVERSI_SIZE - 1))
+#define TOP_LEFT_CORNER     0
+#define TOP_RIGHT_CORNER    (REVERSI_SIZE - 1)
+#define BOTTOM_LEFT_CORNER  (REVERSI_SIZE * (REVERSI_SIZE - 1))
 #define BOTTOM_RIGHT_CORNER ((REVERSI_SIZE * REVERSI_SIZE) -1)
 
 /** Position d'un pion en (x, y) */

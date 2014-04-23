@@ -112,7 +112,7 @@ TCP *tcp_get(IP *ip)
     /* Mise en place de l'host à joindre. */
     addr.sin_addr.s_addr = ip->host;
 
-    /* Connection... */
+    /* Connexion... */
     if(connect(sock->id, (struct sockaddr *)&addr, sizeof(addr)) < 0)
     {
       tcp_close(sock);
