@@ -19,7 +19,7 @@
 #define CONFIG_FILENAME "config"
 
 /** Niveau de l'IA. */
-#define IA_LEVEL 5
+#define IA_LEVEL 7
 
 static volatile int run = 1;
 static jmp_buf jbuf;
