@@ -31,9 +31,11 @@ Le premier type de jeu n'étant pas le but du projet il ne permet de faire qu'un
 
 \section{Évolutions du programme}
 \noindent
-Durant le développement nous avons pu construire quatre version d'IA plus ou moins différentes.
+Durant le développement nous avons pu construire cinq version d'IA plus ou moins différentes.
 
 \paragraph{}La première version de l'IA est basique, utilise un algorithme min-max et évalue un plateau grâce à un tableau donnant un poids à chaque cellule. La qualité d'un plateau est donc simplement donnée par la somme des poids des cellules détenus par le joueur.
+
+\paragraph{}Cette IA à également été codé avec l'algorithme Negamax ce qui permet de réduire la quantité de code à écrire mais ne change en rien la profondeur de calcul ou la qualité de l'évaluation.
 
 \paragraph{}La seconde version utilise un algorithme min-max avec un élagage alpha b\^eta  nous faisant ainsi gagner en profondeur de calcul. La fonction d'évaluation est moins naïve et gère les cases avant les coins au cas par cas. En effet dans la première version ces positions étaient simplement considérées comme mauvaises, ici on étudie plus en détail ce qui ce passe autour. On regarde ce qu'il y a dans le coin et ce qu'il y a au bout de la ligne, la colonne ou la diagonale ou se trouve la positon testée, suivant les cas on décide si la position est plus ou moins bonne.
 Nous avons fait cette fonction en observant le fait que jouer avant le coin, si le coin est vide est effectivement un mauvais choix mais jouer avant le coin si on possède le coin est un bon choix puisque le pion ne peut \^etre perdu.
@@ -44,4 +46,5 @@ Le milieu de la partie est évalué grâce à la même fonction que dans la vers
 
 \paragraph{} La quatrième version utilise le même principe que la précédente mais en début de partie utilise les degré de liberté de chaque pion. Ce qui affine un peu plus le jeu en ne comptant donc pas les pions qui sont totalement encerclés et qui ne constituent donc pas des possibilités de jeu pour l'adversaire.
 Le milieu de la partie est un peu améliorer également puisqu'en plus d'utiliser la fonction d'évaluation utilisée dans la version 1 de l'IA, on prend en compte le nombre de pions de l'adversaire et on tente donc en plus de le limiter.
+
 \end{document}
