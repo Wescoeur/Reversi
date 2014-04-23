@@ -12,6 +12,16 @@
 #include "reversi.h"
 #include "ia.h"
 
+/** Grille d'évaluation de l'IA. */
+static const int grid[] = {600, -150, 30, 10, 10, 30, -150, 600,
+                           -150, -250, 0, 0, 0, 0, -250, -150,
+                           30, 0, 1, 2, 2, 1, 0, 30,
+                           10, 0, 2, 16, 16, 2, 0, 10,
+                           10, 0, 2, 16, 16, 2, 0, 10,
+                           10, 0, 1, 2, 2, 1, 0, 30,
+                           -150, -250, 0, 0, 0, 0, -250, -150,
+                           600, -150, 30, 10, 10, 30, -150, 600};
+
 /** Copie une grille de jeu. */
 /* @param reversi : Grille à copier. */
 /* @return : Une copie de grille. */
@@ -30,9 +40,12 @@ int ia_eval_grid(Reversi *reversi, Player player)
   int i, n = 0;
 
   for(i = 0; i < REVERSI_SIZE * REVERSI_SIZE; i++)
-    n += reversi->array[i] == player ? grid[i] : -grid[i];
+    if(reversi->array[i] == player)
+      n += grid[i];
+    else if(reversi->array[i] == INV_PLAYER(player))
+      n -= grid[i];
 
-  return 0;
+  return n;
 }
 
 /*

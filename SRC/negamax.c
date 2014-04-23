@@ -25,17 +25,13 @@ int ia_negamax(Reversi *reversi, Player player, int depth, int alpha, int beta, 
 {
   int i, j, temp;
   Reversi *reversiCpy = NULL;
-  Pos playedPos, bestPos;
+  Pos playedPos;
+  static int lvl_max = 7;
 
   if(depth <= 0 || reversi_game_over(reversi))
-  {
     return ia_eval_grid(reversi, player);
-  }
 
-  bestPos.x = -1;
-  bestPos.y = -1;
-
-  if(depth == 7)
+  if(depth == lvl_max)
   {
     pos->x = -1;
     pos->y = -1;
@@ -52,29 +48,20 @@ int ia_negamax(Reversi *reversi, Player player, int depth, int alpha, int beta, 
 
       if(reversi_set_ia_move(reversiCpy, player, &playedPos))
       {
-        temp = ia_negamax(reversiCpy, INV_PLAYER(player), depth - 1, -beta, -alpha, pos);
+        temp = -ia_negamax(reversiCpy, INV_PLAYER(player), depth - 1, -beta, -alpha, pos);
 
-        if (temp >= alpha)
+        if(temp >= alpha)
         {
           alpha = temp;
 
-          bestPos.x = -1;
-          bestPos.y = -1;
-
-          if(depth == 7)
+          if(depth == lvl_max)
           {
             pos->x = i;
             pos->y = j;
           }
 
-          if (alpha >= beta)
+          if(alpha >= beta)
           {
-            if(depth == 7)
-            {
-              pos->x = i;
-              pos->y = j;
-            }
-
             reversi_free(reversiCpy);
             return alpha;
           }
