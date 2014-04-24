@@ -1,5 +1,5 @@
 /* ---------------------------------------------------------------------- */
-/* Filename: iaV4.c                                                         */
+/* Filename: iaV4.c                                                       */
 /* Authors: ABHAMON Ronan - HIVERT Kevin                                  */
 /* Date: 2014-02-07 - 08:04:20                                            */
 /*                                                                        */
@@ -109,7 +109,7 @@ int iaV4_alphabeta_bis (Reversi *reversi, int depth, int alpha, int beta, Player
         reversi_free(reversiCpy);
       }
     }
-    return alpha; 
+    return alpha;
   }
 
   for(j = 0; j < REVERSI_SIZE; j++)
