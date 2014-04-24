@@ -1,7 +1,7 @@
 /* ---------------------------------------------------------------------- */
 /* Filename: negamax.c                                                    */
 /* Authors: ABHAMON Ronan - HIVERT Kevin                                  */
-/* Date: 2014-04-24 - 00:16:52                                            */
+/* Date: 2014-04-14 - 00:16:52                                            */
 /*                                                                        */
 /* ---------------------------------------------------------------------- */
 
@@ -62,6 +62,12 @@ int ia_negamax(Reversi *reversi, Player player, int depth, int alpha, int beta, 
 
           if(alpha >= beta)
           {
+            if(depth == lvl_max)
+            {
+              pos->x = i;
+              pos->y = j;
+            }
+
             reversi_free(reversiCpy);
             return alpha;
           }

@@ -11,6 +11,7 @@
 #include <signal.h>
 #include <setjmp.h>
 #include <errno.h>
+#include "ptimer.h"
 #include "config.h"
 #include "reversi.h"
 #include "ia.h"
@@ -130,6 +131,11 @@ void ia_vs_ia(void)
 
   char buffer[66]; /* Données socket. */
 
+  #ifdef PTIMER
+    uint32_t start;
+    uint32_t now;
+  #endif
+
   /* Initialisation des sockets. */
   INIT_SOCKET();
 
@@ -173,11 +179,22 @@ void ia_vs_ia(void)
       printf("Je suis %c !\n", *buffer);
     #endif
 
-    if(*buffer == 'T')
+    if(*buffer == 'T' || *buffer == 'F')
       break; /* Fin de partie. */
+
+    /* Timer start. */
+    #ifdef PTIMER
+      start = timer_start();
+    #endif
 
     /* Coup à jouer. */
     pos = iaV4_alphabeta(&reversi, *buffer, IA_LEVEL);
+
+    /* Timer stop. */
+    #ifdef PTIMER
+      now = timer_stop(start);
+      printf("Search time: %dms\n", now);
+    #endif
 
     buffer[0] = POS(pos.x, pos.y);
     tcp_send(socket, buffer, 1);
